@@ -1,5 +1,6 @@
 package usa.cactuspuppy.PVNBot;
 
+import io.papermc.lib.PaperLib;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.permission.ChildPermission;
@@ -20,6 +21,7 @@ import org.bukkit.plugin.java.annotation.plugin.author.Author;
 public class Wrapper extends JavaPlugin {
     @Override
     public void onEnable() {
+        PaperLib.suggestPaper(this);
         Main.main(new String[1]);
     }
 

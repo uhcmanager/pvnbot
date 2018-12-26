@@ -14,12 +14,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.logging.Logger;
 
 public class Main {
     @Getter @Setter private static JDA invitationJDA;
     @Getter private static JDA mainJDA;
     @Getter private static Logger logger = null;
+    @Getter private static String dataPath = "data"; //where to store data
     private static int keyState = -1;
     private static String[] argsArr = new String[1];
     private static JFrame frame = null;
@@ -27,9 +29,15 @@ public class Main {
     /**
      * Entry point for starting all subroutines
      * @param args command line args
-     *             args[0] - if true
+     *             args[0] - if true, launch command window
      */
     public static void main(String[] args) {
+        try {
+            File dataFolder = Wrapper.getPlugin(Wrapper.class).getDataFolder();
+            dataPath = dataFolder.getPath();
+        } catch (Exception e) {
+            dataPath = "data";
+        }
         argsArr = args;
         if (logger == null) logger = Logger.getLogger(Main.class.getName());
         startInvBot();
