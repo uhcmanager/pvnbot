@@ -11,6 +11,9 @@ import org.bukkit.plugin.java.annotation.plugin.LogPrefix;
 import org.bukkit.plugin.java.annotation.plugin.Plugin;
 import org.bukkit.plugin.java.annotation.plugin.author.Author;
 
+/**
+ * Wrapper class to enable PVNBot to run in Spigot environment.
+ */
 @Plugin(name = "PVNBot", version = "0.1")
 @Description("Provides functionality for Pirates vs. Ninjas UHC")
 @Author("CactusPuppy")

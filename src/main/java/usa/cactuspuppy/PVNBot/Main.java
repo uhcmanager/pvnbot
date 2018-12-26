@@ -5,6 +5,7 @@ import lombok.Setter;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
+import usa.cactuspuppy.PVNBot.mainbot.Init;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import javax.security.auth.login.LoginException;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 public class Main {
     @Getter @Setter private static JDA invitationJDA;
     @Getter private static JDA mainJDA;
-    @Getter private static Logger logger = null;
+    @Getter @Setter private static Logger logger = null;
     @Getter private static String dataPath = "data"; //where to store data
     private static int keyState = -1;
     private static String[] argsArr = new String[1];
@@ -62,6 +63,7 @@ public class Main {
         try {
             String token = FileIO.readToken(Main.class.getResourceAsStream("/mainInfo/secret.txt"));
             mainJDA = new JDABuilder(token).build();
+            Init.main(new String[1]);
         } catch (LoginException e) {
             logger.warning("Could not start main bot");
             e.printStackTrace();
