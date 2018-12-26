@@ -24,11 +24,11 @@ public class InviteMain extends ListenerAdapter {
 
     public static void main() {
         try {
-            JDA jda = new JDABuilder(FileIO.readToken(InviteMain.class.getResourceAsStream("invInfo/secret.txt"))).build();
+            JDA jda = new JDABuilder(FileIO.readToken(InviteMain.class.getResourceAsStream("/invInfo/secret.txt"))).build();
             Main.setInvitationJDA(jda);
-            File dataDir = new File("invBot/data").getAbsoluteFile();
-            if (!dataDir.isDirectory() && !dataDir.mkdir()) throw new RuntimeException("Could not make data directory.");
-            File msgID = new File("invBot/data", "msgid.dat");
+            File dataDir = new File("/invBot/data").getAbsoluteFile();
+            if (!dataDir.isDirectory() && !dataDir.mkdirs()) throw new RuntimeException("Could not make data directory.");
+            File msgID = new File("/invBot/data", "msgid.dat");
             if (!msgID.isFile() && !msgID.createNewFile()) throw new RuntimeException("Could not create msgID file, bot will forget which message to use on shutdown!");
             Map<String, String> results = getMsgID(new FileInputStream(msgID));
 
@@ -43,6 +43,7 @@ public class InviteMain extends ListenerAdapter {
             jda.addEventListener(new InviteMain());
             jda.awaitReady();
         } catch (Exception e) {
+            Main.getLogger().warning("Could not start invitation bot");
             e.printStackTrace();
         }
     }
@@ -53,7 +54,7 @@ public class InviteMain extends ListenerAdapter {
             Scanner scan = new Scanner(iS);
             if (!scan.hasNext()) {
                 storeMsgID(new ByteArrayInputStream("-1\n-1".getBytes()));
-                return getMsgID(new FileInputStream(new File("data", "msgid.dat")));
+                return getMsgID(new FileInputStream(new File("/invBot/data", "msgid.dat")));
             }
             rv.put("channelID", scan.nextLine());
             rv.put("messageID", scan.nextLine());
@@ -68,7 +69,7 @@ public class InviteMain extends ListenerAdapter {
     public static void storeMsgID(InputStream iS) {
         try {
             Scanner scan = new Scanner(iS);
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("data", "msgid.dat")));
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File("/invBot/data", "msgid.dat")));
             while (scan.hasNext()) {
                 bufferedWriter.write(scan.nextLine());
                 bufferedWriter.newLine();
@@ -103,7 +104,7 @@ public class InviteMain extends ListenerAdapter {
         String thisID = event.getMessageId();
         String thisChannelID = event.getChannel().getId();
         if (thisChannelID.equals(channelID) && thisID.equals(messageID)) {
-            System.out.println(String.format("[%s] %s requested invite", LocalDateTime.now(), event.getMember().getUser().getName()));
+            Main.getLogger().info(String.format("[%s] %s requested invite", LocalDateTime.now(), event.getMember().getUser().getName()));
             event.getReaction().removeReaction(event.getUser()).queueAfter(10, TimeUnit.MILLISECONDS);
             event.getMember().getUser().openPrivateChannel().queue(c -> c.sendMessage("Pirates vs. Ninjas Discord Server: https://discord.gg/nHWnT4Q").queue());
         }

@@ -5,8 +5,9 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNInvitation.Main;
-import usa.cactuspuppy.PVNInvitation.textCommand.TextCommandHandler;
+import usa.cactuspuppy.PVNBot.Main;
+import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -40,11 +41,11 @@ public class BindCommandHandler extends TextCommandHandler {
             return;
         }
         //Found message
-        Guild guild = Main.getJda().getGuildById("407385931687919616");
+        Guild guild = Main.getInvitationJDA().getGuildById("407385931687919616");
         message.addReaction(guild.getEmoteById("525571121936859156")).queue();
-        Main.setMessageID(messageID);
-        Main.setChannelID(channelID);
-        Main.storeMsgID(new ByteArrayInputStream(
+        InviteMain.setMessageID(messageID);
+        InviteMain.setChannelID(channelID);
+        InviteMain.storeMsgID(new ByteArrayInputStream(
                 String.format("%s\n%s", channelID, messageID).getBytes()
         ));
         e.getChannel().sendMessage(String.format("%s Successfully started monitoring message ID `%s`", e.getAuthor().getAsMention(), messageID)).queue();

@@ -2,9 +2,9 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand;
 
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNInvitation.textCommand.handler.BindCommandHandler;
-import usa.cactuspuppy.PVNInvitation.textCommand.handler.HelpCommandHandler;
-import usa.cactuspuppy.PVNInvitation.textCommand.handler.PingCommandHandler;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.BindCommandHandler;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.HelpCommandHandler;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.PingCommandHandler;
 
 import java.util.HashMap;
 import java.util.Map;
