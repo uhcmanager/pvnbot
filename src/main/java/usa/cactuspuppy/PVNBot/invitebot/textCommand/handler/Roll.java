@@ -90,21 +90,26 @@ public class Roll extends TextCommandHandler {
             sum += x;
         }
         EmbedBuilder eb = new EmbedBuilder();
-        eb.setColor(new Color(94, 78, 255));
+        eb.setColor(new Color(0, 193, 255));
         eb.setTitle(String.format("%s's Roll", e.getMember().getEffectiveName()));
-        eb.addField("**Dice**", String.format("%d d%d", rolls, sides), false);
+        eb.addField("**Dice**", String.format("%dd%d", rolls, sides), false);
         StringJoiner joiner = new StringJoiner(" + ");
-        int counter = 0;
-        for (int i : terms) {
-            joiner.add(Integer.toString(i));
-            counter++;
-            if (counter >= MAX_DISPLAY_ROLLS + 2) {
-                joiner.add(String.format("*%d more rolls...*", rolls - MAX_DISPLAY_ROLLS));
-                break;
-            }
+        for (int i = 0; i < MAX_DISPLAY_ROLLS && i < terms.size(); i++) {
+            joiner.add(Integer.toString(terms.get(i)));
         }
-        eb.addField("**Rolls**", joiner.toString(), false);
-        eb.addField("**Total**", Integer.toString(sum), false);
+        if (terms.size() == MAX_DISPLAY_ROLLS + 1) {
+            joiner.add(Integer.toString(terms.get(MAX_DISPLAY_ROLLS)));
+        } else if (terms.size() > MAX_DISPLAY_ROLLS + 1) {
+            joiner.add(String.format("*<%d more rolls>*", rolls - MAX_DISPLAY_ROLLS));
+        }
+        if (rolls > 1) {
+            eb.addField("**Rolls**", joiner.toString(), false);
+        }
+        eb.addField("**Result**", Integer.toString(sum), false);
+        if (sides == 1) {
+            if (sum == 1) eb.addField(null, "***CRIT FAIL***", false);
+            else if (sum == 20) eb.addField(null, "***NAT 20***", false);
+        }
         e.getChannel().sendMessage(eb.build()).queue();
     }
 

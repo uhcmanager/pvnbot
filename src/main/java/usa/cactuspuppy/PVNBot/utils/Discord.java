@@ -1,6 +1,8 @@
 package usa.cactuspuppy.PVNBot.utils;
 
 import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.managers.GuildController;
 import net.dv8tion.jda.core.managers.RoleManager;
 import usa.cactuspuppy.PVNBot.Main;
@@ -8,7 +10,7 @@ import usa.cactuspuppy.PVNBot.Main;
 /**
  * Utility class for managing channels and roles
  */
-public final class DiscordManager {
+public final class Discord {
 
     /**
      * Method for generating a controller
@@ -47,8 +49,33 @@ public final class DiscordManager {
         return role.getIdLong();
     }
 
+    /**
+     * Creates a voice channel with the given name in the specified category
+     * @param category Category to create voice channel in
+     * @param name Name of voice channel
+     * @param allowDuplicate Whether to check for a duplicate channel by name, ignoring case
+     * @return ID of new channel, -1 if a duplicate is found
+     */
     public static long createVoiceChannel(long category, String name, boolean allowDuplicate) {
-        //TODO
-        return -1;
+        GuildController controller = getMainController();
+        //Found a duplicate
+        if (!allowDuplicate && !controller.getGuild().getVoiceChannelsByName(name, true).isEmpty()) return -1;
+        VoiceChannel vc = (VoiceChannel) controller.getGuild().getCategoryById(category).createVoiceChannel(name).complete();
+        return vc.getIdLong();
+    }
+
+    /**
+     * Creates a text channel with the given name in the specified category
+     * @param category Category to create text channel in
+     * @param name Name of text channel
+     * @param allowDuplicate Whether to check for a duplicate channel by name, ignoring case
+     * @return ID of new channel, -1 if a duplicate is found
+     */
+    public static long createTextChannel(long category, String name, boolean allowDuplicate) {
+        GuildController controller = getMainController();
+        //Found a duplicate
+        if (!allowDuplicate && !controller.getGuild().getTextChannelsByName(name, true).isEmpty()) return -1;
+        TextChannel tc = (TextChannel) controller.getGuild().getCategoryById(category).createTextChannel(name).complete();
+        return tc.getIdLong();
     }
 }

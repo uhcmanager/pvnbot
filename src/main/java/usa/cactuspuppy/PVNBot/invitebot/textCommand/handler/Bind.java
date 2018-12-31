@@ -29,7 +29,6 @@ public class Bind extends TextCommandHandler {
         String channelID = args[0];
         String messageID = args[1];
 
-        //TODO: Check message can be found
         TextChannel channel = e.getGuild().getTextChannelById(channelID);
         if (channel == null) {
             e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Could not find channel with ID `" + channelID + "`").queue();
