@@ -25,6 +25,7 @@ public class Roll extends TextCommandHandler {
         int rolls = 1;
         int sides = 6;
         Pattern sidesMatcher = Pattern.compile("d([0-9]+)");
+        Pattern rollSideMatcher = Pattern.compile("([0-9]+)d([0-9]+)");
         Matcher m;
         for (String s : args) {
             m = sidesMatcher.matcher(s);
@@ -42,11 +43,37 @@ public class Roll extends TextCommandHandler {
                 }
                 continue;
             }
-            if (s.matches("[0-9]{1,10}")) {
+            m = rollSideMatcher.matcher(s);
+            if (m.matches()) {
+                String rollsS = m.group(1);
+                String sidesS = m.group(2);
+                try {
+                    rolls = Integer.parseInt(rollsS);
+                    if (rolls <= 0) {
+                        parseProblem(e, "Number of rolls must be positive");
+                        return;
+                    }
+                } catch (NumberFormatException e1) {
+                    parseProblem(e, "Number of rolls could not be parsed");
+                    return;
+                }
+                try {
+                    sides = Integer.parseInt(sidesS);
+                    if (sides <= 0) {
+                        parseProblem(e, "Number of sides must be positive");
+                        return;
+                    }
+                } catch (NumberFormatException e1) {
+                    parseProblem(e, "Number of sides could not be parsed");
+                    return;
+                }
+            }
+            if (s.matches("[0-9]+")) {
                 try {
                     rolls = Integer.parseInt(s);
                     if (rolls <= 0) {
                         parseProblem(e, "Number of rolls must be positive");
+                        return;
                     }
                 } catch (NumberFormatException e1) {
                     parseProblem(e, s + " could not be parsed");
