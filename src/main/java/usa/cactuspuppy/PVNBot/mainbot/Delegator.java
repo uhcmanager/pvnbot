@@ -4,11 +4,14 @@ import lombok.Getter;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import usa.cactuspuppy.PVNBot.Main;
+import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
+import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,12 +21,22 @@ import java.util.regex.Pattern;
  */
 public class Delegator extends ListenerAdapter {
     @Getter private static String cmdPrefix = "!";
+    private static Map<String, CommandHandler> handlerMap;
+    static {
+        addHandler("ping", new Ping());
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         Optional<String> cmdOptional = getCommand(e.getMessage().getContentRaw());
         if (cmdOptional.isPresent()) {
             String command = cmdOptional.get();
+            CommandHandler handler =  handlerMap.get(command);
         }
+    }
+
+    private static void addHandler(String name, CommandHandler handler) {
+        handlerMap.put(name, handler);
     }
 
     /**

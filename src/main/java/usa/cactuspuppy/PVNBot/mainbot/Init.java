@@ -2,8 +2,11 @@ package usa.cactuspuppy.PVNBot.mainbot;
 
 import net.dv8tion.jda.core.JDA;
 import usa.cactuspuppy.PVNBot.Main;
+import usa.cactuspuppy.PVNBot.utils.FileIO;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -21,6 +24,17 @@ public class Init {
                 Delegator.setCmdPrefix(prefix);
             } catch (FileNotFoundException e) {
                 Delegator.setCmdPrefix("!");
+            }
+        }
+        File mainGuildFile = new File(Main.getDataPath() + "/mainBot", "mainGuild.dat");
+        if (mainGuildFile.isFile()) {
+            try {
+                String id = FileIO.readToken(new FileInputStream(mainGuildFile));
+                Main.setMainGuild(id);
+            } catch (FileNotFoundException e) {
+                Main.getLogger().warning("Could not find ID file, defaulting to hardcoded value.");
+                e.printStackTrace();
+                Main.setMainGuild("524660535556309020"); //Current PvN server ID
             }
         }
     }

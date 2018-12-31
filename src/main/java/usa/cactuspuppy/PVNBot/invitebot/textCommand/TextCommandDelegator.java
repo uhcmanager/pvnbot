@@ -2,9 +2,9 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand;
 
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.BindCommandHandler;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.HelpCommandHandler;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.PingCommandHandler;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Bind;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Help;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Ping;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +12,9 @@ import java.util.Map;
 public class TextCommandDelegator {
     private static Map<String, TextCommandHandler> commandHandlerMap = new HashMap<String, TextCommandHandler>();
     static {
-        commandHandlerMap.put("ping", new PingCommandHandler());
-        commandHandlerMap.put("help", new HelpCommandHandler());
-        commandHandlerMap.put("bind", new BindCommandHandler());
+        commandHandlerMap.put("ping", new Ping());
+        commandHandlerMap.put("help", new Help());
+        commandHandlerMap.put("bind", new Bind());
     }
 
     public static void delegate(String command, String[] args, MessageReceivedEvent e) {
@@ -27,6 +27,10 @@ public class TextCommandDelegator {
             } else {
                 e.getChannel().sendMessage(String.format("Unknown command `%s`. Type `;help` for a list of commands.", command)).queue();
             }
+            return;
+        }
+        if (!handler.hasPermission(args, e)) {
+            e.getChannel().sendMessage(String.format("You do not have permission to run this command %s.", e.getAuthor().getAsMention())).queue();
             return;
         }
         handler.onCommand(args, e);

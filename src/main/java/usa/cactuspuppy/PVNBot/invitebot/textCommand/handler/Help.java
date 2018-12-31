@@ -6,7 +6,7 @@ import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
 
 import java.awt.*;
 
-public class HelpCommandHandler extends TextCommandHandler {
+public class Help extends TextCommandHandler {
     private static EmbedBuilder eb = new EmbedBuilder();
     static {
         eb.setAuthor("Invitation Bot");

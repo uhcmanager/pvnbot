@@ -13,7 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BindCommandHandler extends TextCommandHandler {
+public class Bind extends TextCommandHandler {
     /**
      * Called to handle the bind command
      *

@@ -4,4 +4,4 @@ dependency-reduced-pom.xml
 src/main/resources/invInfo/
 src/main/resources/mainInfo/
 target/
-invBot/
+data/

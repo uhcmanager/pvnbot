@@ -25,7 +25,7 @@ public class Wrapper extends JavaPlugin {
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);
-        Main.main(new String[1]);
+        Main.main(new String[0]);
     }
 
     @Override

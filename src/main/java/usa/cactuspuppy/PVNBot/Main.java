@@ -23,8 +23,9 @@ public class Main {
     @Getter private static JDA mainJDA;
     @Getter @Setter private static Logger logger = null;
     @Getter private static String dataPath = "data"; //where to store data
+    @Getter @Setter private static String mainGuild;
     private static int keyState = -1;
-    private static String[] argsArr = new String[1];
+    private static String[] argsArr = new String[0];
     private static JFrame frame = null;
 
     /**
@@ -63,7 +64,7 @@ public class Main {
         try {
             String token = FileIO.readToken(Main.class.getResourceAsStream("/mainInfo/secret.txt"));
             mainJDA = new JDABuilder(token).build();
-            Init.main(new String[1]);
+            Init.main(new String[0]);
         } catch (LoginException e) {
             logger.warning("Could not start main bot");
             e.printStackTrace();
