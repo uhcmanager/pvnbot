@@ -11,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
  */
 public class Delegator extends ListenerAdapter {
     @Getter private static String cmdPrefix = "!";
-    private static Map<String, CommandHandler> handlerMap;
+    private static Map<String, CommandHandler> handlerMap = new HashMap<>();
     static {
         addHandler("ping", new Ping());
     }

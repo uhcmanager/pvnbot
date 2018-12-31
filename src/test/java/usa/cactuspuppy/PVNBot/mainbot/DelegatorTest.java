@@ -2,18 +2,12 @@ package usa.cactuspuppy.PVNBot.mainbot;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import usa.cactuspuppy.PVNBot.Main;
+import usa.cactuspuppy.PVNBot.mainbot.Delegator;
 
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 public class DelegatorTest {
 

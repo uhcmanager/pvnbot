@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Bind;
 import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Help;
 import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Ping;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Roll;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +13,14 @@ import java.util.Map;
 public class TextCommandDelegator {
     private static Map<String, TextCommandHandler> commandHandlerMap = new HashMap<String, TextCommandHandler>();
     static {
-        commandHandlerMap.put("ping", new Ping());
-        commandHandlerMap.put("help", new Help());
-        commandHandlerMap.put("bind", new Bind());
+        addHandler("ping", new Ping());
+        addHandler("help", new Help());
+        addHandler("bind", new Bind());
+        addHandler("roll", new Roll());
+    }
+
+    static void addHandler(String name, TextCommandHandler handler) {
+        commandHandlerMap.put(name, handler);
     }
 
     public static void delegate(String command, String[] args, MessageReceivedEvent e) {

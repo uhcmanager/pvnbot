@@ -10,8 +10,17 @@ public class Help extends TextCommandHandler {
     private static EmbedBuilder eb = new EmbedBuilder();
     static {
         eb.setAuthor("Invitation Bot");
-        eb.setColor(Color.GREEN);
-        eb.addField("Commands:", ";help\n;ping\n;bind", false);
+        eb.setColor(new Color(94, 78, 255));
+        eb.addField("Commands:",
+                "Command for everyone!\n" +
+                        "**;help** - Shows this page\n" +
+                        "**;ping** - Pong! Heartbeat command.\n" +
+                        "**;roll** *<# rolls> d<# sides>* - Rolls dice. Makes Remmy happy.",
+                false);
+        eb.addField("**Admin Commands**",
+                "To use these commands, you must have a higher role than the bot's highest role\n" +
+                        "**;bind** *<Channel ID> <Message ID>* - Binds bot to specified message, making it the invitation message" ,
+                false);
     }
     /**
      * Called to handle the help command
