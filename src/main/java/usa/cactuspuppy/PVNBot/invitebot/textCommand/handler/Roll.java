@@ -9,7 +9,6 @@ import java.awt.*;
 import java.util.*;
 
 public class Roll extends TextCommandHandler {
-    private static final int MAX_DISPLAY_ROLLS = 5;
     /**
      * Called to handle rolling dice
      *

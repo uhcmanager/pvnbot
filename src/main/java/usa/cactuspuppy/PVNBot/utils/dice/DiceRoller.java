@@ -14,14 +14,19 @@ import java.util.stream.Collectors;
  * @author CactusPuppy
  */
 public final class DiceRoller {
-    /**
-     * Class to represent a set of rolls of identical dice
-     */
+    private static final int MAX_ROLLS = 100;
+    private static Map<Character, RollModifier> rollModifiers = new HashMap<>();
+    static {
+        addModifier("k([0-9]+)", 'k');
+        addModifier("r([0-9]+)", 'r');
+        addModifier("D([0-9]+)", 'D');
+    }
+
     @AllArgsConstructor
     @Getter
     public class RollResult {
-        long result;
-        List<Integer> rolls;
+        private long result;
+        private List<Integer> rolls;
 
         @Override
         public String toString() {
@@ -34,12 +39,28 @@ public final class DiceRoller {
         }
     }
 
+    @AllArgsConstructor
+    @Getter
+    private static class RollModifier {
+        private Pattern pattern;
+        private char mod;
+    }
+
+    private static void addModifier(String regex, char mod) {
+        rollModifiers.put(mod, new RollModifier(Pattern.compile("^(" + regex + ")"), mod));
+    }
+
     /**
-     * Performs a AdB format roll with potential modifiers<br>
-     * k - keep highest N rolls
-     * D - drop N lowest rolls
-     * r - reroll every die which yields N
+     * Performs a AdB format roll with potential modifiers Xn<br>
+     *     <p>
+     *         Modifiers:<br>
+     *         k - keep highest n rolls<br>
+     *         D - drop n lowest rolls<br>
+     *         r - reroll every die which yields n<br>
+     *     </p>
+     *
      * @param command Roll formula to parse
+     * @param keepDrops Whether to include dropped rolls in the returned formula
      * @return Map containing:<br>
      *     "success" - "true" if calculation was successful, "false" otherwise<br>
      *     "reason" - If success if false, reason why parsing unsuccessful.<br>
@@ -48,54 +69,129 @@ public final class DiceRoller {
      *     "result" - The final total of the formula<br>
      *     "formula" - The mathematical formulaic expression, with rolled numbers<br>
      */
-    public static Map<String, String> parseSingleRoll(String command) {
+    public static Map<String, String> parseSingleRoll(String command, boolean keepDrops) {
         Map<String, String> results = new HashMap<>();
         int rolls = 1;
-        int sides = 6;
+        int sides;
         int keep = 0;
         List<Integer> rerolls = new ArrayList<>();
 
-
         //Begin parsing
-        Pattern p = Pattern.compile("(\\d*)d(\\d+)(\\w+)");
+        Pattern p = Pattern.compile("(\\d*)d(\\d+)(\\w*)");
         Matcher m = p.matcher(command);
         //Check format
         if (!m.matches()) {
             results.put("success", "false");
-            results.put("reason", "");
+            results.put("reason", "Incorrect formatting");
             return results;
         }
-        //Rolls
+        //Get rolls
         if (!m.group(1).equals("")) {
             try {
-                rolls = Integer.parseInt(m.group(1));
-            } catch (NumberFormatException e) {
-                try {
-                    new BigInteger(m.group(1));
-                } catch (NumberFormatException e1) {
+                rolls = stringToInt(m.group(1));
+                if (rolls <= 0) {
                     results.put("success", "false");
-                    results.put("reason", "Could not parse number of rolls");
+                    results.put("reason", "Number of rolls must be positive");
+                    return results;
+                } else if (rolls > MAX_ROLLS) {
+                    results.put("success", "false");
+                    results.put("reason", "Number of rolls may not exceed " + MAX_ROLLS);
+                    return results;
+                }
+            } catch (NumberFormatException e) {
+                results.put("success", "false");
+                results.put("reason", e.getMessage());
+                return results;
+            }
+        }
+        //Get sides
+        try {
+            sides = Integer.parseInt(m.group(2));
+            if (sides <= 0) {
+                results.put("success", "false");
+                results.put("reason", "Number of sides must be positive");
+                return results;
+            }
+        } catch (NumberFormatException e) {
+            results.put("success", "false");
+            results.put("reason", e.getMessage());
+            return results;
+        }
+        //Parse modifiers
+        if (!m.group(3).equals("")) {
+            String modifiers = m.group(3);
+            while (!modifiers.equals("")) {
+                boolean match = false;
+                //Attempt to match all modifiers with regex
+                for (RollModifier r : rollModifiers.values()) {
+                    Matcher matcher = r.getPattern().matcher(modifiers);
+                    if (matcher.find()) { //found a match
+                        try {
+                            match = true;
+                            switch (r.getMod()) {
+                                case 'k': {
+                                    keep = stringToInt(matcher.group().substring(1));
+                                    break;
+                                }
+                                case 'D': {
+                                    keep = rolls - stringToInt(matcher.group().substring(1));
+                                    break;
+                                }
+                                case 'r': {
+                                    rerolls.add(stringToInt(matcher.group().substring(1)));
+                                    break;
+                                }
+                                default: throw new NumberFormatException("Unknown modifier " + r.getMod());
+                            }
+                            break;
+                        } catch (NumberFormatException e) { //Couldn't extract an int from the trailing numbers
+                            results.put("success", "false");
+                            results.put("reason", e.getMessage());
+                            return results;
+                        }
+                    }
+                }
+                if (!match) {
+                    results.put("success", "false");
+                    results.put("reason", "Issue parsing modifiers at: " + modifiers);
                     return results;
                 }
             }
         }
+        //ROLL FOR INITIATIVE
+        try {
+            RollResult rollResult = roll(rolls, sides, rerolls);
+        } catch (Exception e) {
+            results.put("success", "false");
+            results.put("reason", e.getMessage());
+            return results;
+        }
+        //TODO: Handle keeping
+    }
+
+    /**
+     * Overloaded single roll command
+     * @param command roll command
+     * @return the resulting rolls without dropped rolls
+     */
+    public static Map<String, String> parseSingleRoll(String command) {
+        return parseSingleRoll(command, false);
     }
 
     /**
      * Generates rolls of dice, with option to keep a certain number and rerolling a subset of possible values
      * @param rolls number of rolls
      * @param sides number of sides on each die
-     * @param keep Specifies number of dice to keep (highest rolls), 0 to disable
      * @param rerolls If a roll generates any of these values, reroll. (Null or Empty List disables)
      * @return RollResult representing the rolls
-     * @throws IllegalAccessException Thrown if any argument is non-sensical (i.e. reroll every possible value)
+     * @throws IllegalArgumentException Thrown if any argument is non-sensical (i.e. reroll every possible value)
+     * @throws RuntimeException If the roller is unable to get rolls in a reasonable number of iterations
      */
-    public static RollResult roll(int rolls, int sides, int keep, List<Integer> rerolls) throws IllegalAccessException {
+    public static RollResult roll(int rolls, int sides, List<Integer> rerolls) throws RuntimeException {
         if (rerolls == null) rerolls = new ArrayList<>();
         //Sanity checks
         if (rolls <= 0) throw new IllegalArgumentException("Number of rolls must be positive");
         if (sides <= 0) throw new IllegalArgumentException("Number of sides must be positive");
-        if (rolls < keep) throw new IllegalArgumentException("Cannot keep more rolls than were rolled");
         //Filter passed rerolls, sorting in the process
         rerolls = rerolls.stream().sorted().distinct().filter(i -> isPossible(i, sides)).collect(Collectors.toList());
         if (rerolls.size() == sides) throw new IllegalArgumentException("Cannot reroll on every possible roll");
@@ -112,5 +208,17 @@ public final class DiceRoller {
         return value >= 1 && value <= sides;
     }
 
-
+    public static int stringToInt(String s) throws NumberFormatException {
+        try {
+            int i = Integer.parseInt(s);
+            return i;
+        } catch (NumberFormatException e) {
+            try {
+                new BigInteger(s);
+            } catch (Exception e1) {
+                throw e;
+            }
+            throw new NumberFormatException("String exceeds integer bounds");
+        }
+    }
 }
