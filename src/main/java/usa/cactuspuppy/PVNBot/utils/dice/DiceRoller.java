@@ -1,8 +1,7 @@
-package usa.cactuspuppy.PVNBot.utils;
+package usa.cactuspuppy.PVNBot.utils.dice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Value;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -10,7 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public final class DiceParser {
+/**
+ * Utility class with ability to parse and perform rolls of format AdX with potential modifiers
+ * @author CactusPuppy
+ */
+public final class DiceRoller {
     /**
      * Class to represent a set of rolls of identical dice
      */
@@ -32,7 +35,10 @@ public final class DiceParser {
     }
 
     /**
-     * Takes a AdB format roll with potential modifiers
+     * Performs a AdB format roll with potential modifiers<br>
+     * k - keep highest N rolls
+     * D - drop N lowest rolls
+     * r - reroll every die which yields N
      * @param command Roll formula to parse
      * @return Map containing:<br>
      *     "success" - "true" if calculation was successful, "false" otherwise<br>
@@ -45,18 +51,18 @@ public final class DiceParser {
     public static Map<String, String> parseSingleRoll(String command) {
         Map<String, String> results = new HashMap<>();
         int rolls = 1;
-        int sides;
-        int keep;
+        int sides = 6;
+        int keep = 0;
         List<Integer> rerolls = new ArrayList<>();
 
 
         //Begin parsing
         Pattern p = Pattern.compile("(\\d*)d(\\d+)(\\w+)");
         Matcher m = p.matcher(command);
-        //
+        //Check format
         if (!m.matches()) {
             results.put("success", "false");
-            results.put("reason", "")
+            results.put("reason", "");
             return results;
         }
         //Rolls

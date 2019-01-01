@@ -3,7 +3,7 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand.handler;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
-import usa.cactuspuppy.PVNBot.utils.DiceParser;
+import usa.cactuspuppy.PVNBot.utils.dice.DiceRoller;
 
 import java.awt.*;
 import java.util.*;
@@ -25,7 +25,7 @@ public class Roll extends TextCommandHandler {
         }
         String noSpace = joiner.toString();
 
-        Map<String, String> results = DiceParser.parseSingleRoll(noSpace);
+        Map<String, String> results = DiceRoller.parseSingleRoll(noSpace);
         if (results.get("success").equals("false")) {
             parseProblem(e, results.get("reason"));
             return;
