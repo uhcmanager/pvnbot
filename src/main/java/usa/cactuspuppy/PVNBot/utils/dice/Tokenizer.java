@@ -36,6 +36,6 @@ public class Tokenizer {
     }
 
     public class Token {
-        private int
+        private int tokenID;
     }
 }

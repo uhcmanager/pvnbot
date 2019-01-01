@@ -23,6 +23,7 @@ public class RollTest {
         MessageChannel channel = Mockito.mock(MessageChannel.class);
         MessageAction action = Mockito.mock(MessageAction.class);
         Mockito.when(channel.sendMessage((MessageEmbed) Mockito.any())).thenReturn(action);
+        Mockito.when(channel.sendMessage(Mockito.anyString())).thenReturn(action);
 
         MessageReceivedEvent e = Mockito.mock(MessageReceivedEvent.class);
         Mockito.when(e.getAuthor()).thenReturn(user);
@@ -30,6 +31,8 @@ public class RollTest {
         Mockito.when(e.getChannel()).thenReturn(channel);
 
         Roll test = new Roll();
-        test.onCommand(new String[0], e);
+        String[] args = new String[1];
+        args[0] = "2d20k1";
+        test.onCommand(args, e);
     }
 }

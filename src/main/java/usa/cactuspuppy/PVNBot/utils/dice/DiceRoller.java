@@ -2,6 +2,7 @@ package usa.cactuspuppy.PVNBot.utils.dice;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -15,27 +16,36 @@ import java.util.stream.Collectors;
  */
 public final class DiceRoller {
     private static final int MAX_ROLLS = 100;
+    private static final int MAX_ATTEMPTS = 10000;
     private static Map<Character, RollModifier> rollModifiers = new HashMap<>();
+    @Setter private static Random rng = new Random();
     static {
-        addModifier("k([0-9]+)", 'k');
-        addModifier("r([0-9]+)", 'r');
-        addModifier("D([0-9]+)", 'D');
+        addModifier("k(\\d+)", 'k');
+        addModifier("r(\\d+)", 'r');
+        addModifier("D(\\d+)", 'D');
+        addModifier("v", 'v');
     }
 
     @AllArgsConstructor
     @Getter
-    public class RollResult {
+    public static class RollResult {
         private long result;
         private List<Integer> rolls;
+        private List<Integer> drops;
 
         @Override
         public String toString() {
-            String rep = Long.toString(result);
-            StringJoiner rolls = new StringJoiner(",");
+            StringJoiner rolls = new StringJoiner(" + ");
+            LinkedList<Integer> dropsCopy = new LinkedList<>(drops);
             for (int r : this.rolls) {
-                rolls.add(Integer.toString(r));
+                if (dropsCopy.contains(r)) {
+                    rolls.add("~~" + r + "~~");
+                    dropsCopy.removeFirstOccurrence(r);
+                } else {
+                    rolls.add(String.valueOf(r));
+                }
             }
-            return rep + ";" + rolls.toString();
+            return rolls.toString();
         }
     }
 
@@ -57,6 +67,7 @@ public final class DiceRoller {
      *         k - keep highest n rolls<br>
      *         D - drop n lowest rolls<br>
      *         r - reroll every die which yields n<br>
+     *         v - show dropped rolls<br>
      *     </p>
      *
      * @param command Roll formula to parse
@@ -67,13 +78,13 @@ public final class DiceRoller {
      *     "sides" - Number of sides on dice rolled<br>
      *     "rolls" - Number of dice rolled<br>
      *     "result" - The final total of the formula<br>
-     *     "formula" - The mathematical formulaic expression, with rolled numbers<br>
+     *     "formula" - All rolls concatenated with ", ", dropped rolls braced by "~~"<br>
      */
     public static Map<String, String> parseSingleRoll(String command, boolean keepDrops) {
         Map<String, String> results = new HashMap<>();
         int rolls = 1;
         int sides;
-        int keep = 0;
+        int drop = 0;
         List<Integer> rerolls = new ArrayList<>();
 
         //Begin parsing
@@ -106,7 +117,7 @@ public final class DiceRoller {
         }
         //Get sides
         try {
-            sides = Integer.parseInt(m.group(2));
+            sides = stringToInt(m.group(2));
             if (sides <= 0) {
                 results.put("success", "false");
                 results.put("reason", "Number of sides must be positive");
@@ -130,19 +141,24 @@ public final class DiceRoller {
                             match = true;
                             switch (r.getMod()) {
                                 case 'k': {
-                                    keep = stringToInt(matcher.group().substring(1));
+                                    drop = rolls - stringToInt(matcher.group().substring(1));
                                     break;
                                 }
                                 case 'D': {
-                                    keep = rolls - stringToInt(matcher.group().substring(1));
+                                    drop = stringToInt(matcher.group().substring(1));
                                     break;
                                 }
                                 case 'r': {
                                     rerolls.add(stringToInt(matcher.group().substring(1)));
                                     break;
                                 }
+                                case 'v': {
+                                    keepDrops = true;
+                                    break;
+                                }
                                 default: throw new NumberFormatException("Unknown modifier " + r.getMod());
                             }
+                            modifiers = matcher.replaceFirst("").trim(); //eat modifier
                             break;
                         } catch (NumberFormatException e) { //Couldn't extract an int from the trailing numbers
                             results.put("success", "false");
@@ -159,14 +175,20 @@ public final class DiceRoller {
             }
         }
         //ROLL FOR INITIATIVE
+        RollResult rollResult;
         try {
-            RollResult rollResult = roll(rolls, sides, rerolls);
+            rollResult = roll(rolls, sides, rerolls, drop, keepDrops);
         } catch (Exception e) {
             results.put("success", "false");
             results.put("reason", e.getMessage());
             return results;
         }
-        //TODO: Handle keeping
+        results.put("success", "true");
+        results.put("sides", String.valueOf(sides));
+        results.put("rolls", String.valueOf(rolls));
+        results.put("result", String.valueOf(rollResult.getResult()));
+        results.put("formula", rollResult.toString());
+        return results;
     }
 
     /**
@@ -183,19 +205,43 @@ public final class DiceRoller {
      * @param rolls number of rolls
      * @param sides number of sides on each die
      * @param rerolls If a roll generates any of these values, reroll. (Null or Empty List disables)
+     * @param drop How many lowest rolls to drop
      * @return RollResult representing the rolls
      * @throws IllegalArgumentException Thrown if any argument is non-sensical (i.e. reroll every possible value)
      * @throws RuntimeException If the roller is unable to get rolls in a reasonable number of iterations
      */
-    public static RollResult roll(int rolls, int sides, List<Integer> rerolls) throws RuntimeException {
+    public static RollResult roll(int rolls, int sides, List<Integer> rerolls, int drop, boolean keepDrops) throws RuntimeException {
         if (rerolls == null) rerolls = new ArrayList<>();
         //Sanity checks
         if (rolls <= 0) throw new IllegalArgumentException("Number of rolls must be positive");
         if (sides <= 0) throw new IllegalArgumentException("Number of sides must be positive");
-        //Filter passed rerolls, sorting in the process
-        rerolls = rerolls.stream().sorted().distinct().filter(i -> isPossible(i, sides)).collect(Collectors.toList());
+        if (drop >= rolls) throw new IllegalArgumentException("Number of drops must be less than number of rolls");
+        //Filter passed rerolls
+        if (rerolls.size() > 0) rerolls = rerolls.stream().distinct().filter(i -> isPossible(i, sides)).collect(Collectors.toList());
         if (rerolls.size() == sides) throw new IllegalArgumentException("Cannot reroll on every possible roll");
-        //TODO: Roll with given parameters
+        int cRolls = 0; //completed rolls counter
+        LinkedList<Integer> rolled = new LinkedList<>();
+        for (int i = 0; i < MAX_ATTEMPTS; i++) {
+            int roll = rng.nextInt(sides) + 1;
+            if (rerolls.contains(roll)) continue; //ignore this roll
+            rolled.add(roll);
+            cRolls++;
+            if (cRolls == rolls) break;
+            if (i == MAX_ATTEMPTS - 1) throw new RuntimeException("Timeout while rolling dice");
+        }
+        int sum = rolled.stream().mapToInt(Integer::intValue).sum();
+        if (drop == 0) {
+            return new RollResult(sum, rolled, new ArrayList<>(0));
+        }
+        LinkedList<Integer> keep = new LinkedList<>(rolled);
+        ArrayList<Integer> dropped = new ArrayList<>(drop);
+        for (int i = 0; i < drop; i++) {
+            int min = Collections.min(keep);
+            dropped.add(min);
+            keep.removeFirstOccurrence(min);
+        }
+        sum = keep.stream().mapToInt(Integer::intValue).sum();
+        return new RollResult(sum, (keepDrops ? rolled : keep), (keepDrops ? dropped : new ArrayList<>(0)));
     }
 
     /**
@@ -203,6 +249,7 @@ public final class DiceRoller {
      * @param value value to check
      * @param sides number of sides on the die
      * @return whether value can be rolled on this die
+     * @throws NumberFormatException thrown if the string could not be converted
      */
     private static boolean isPossible(int value, int sides) {
         return value >= 1 && value <= sides;
