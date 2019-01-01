@@ -3,14 +3,10 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand.handler;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
+import usa.cactuspuppy.PVNBot.utils.DiceParser;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.StringJoiner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class Roll extends TextCommandHandler {
     private static final int MAX_DISPLAY_ROLLS = 5;
@@ -22,98 +18,38 @@ public class Roll extends TextCommandHandler {
      */
     @Override
     public void onCommand(String[] args, MessageReceivedEvent e) {
-        int rolls = 1;
-        int sides = 6;
-        Pattern sidesMatcher = Pattern.compile("d([0-9]+)");
-        Pattern rollSideMatcher = Pattern.compile("([0-9]+)d([0-9]+)");
-        Matcher m;
+
+        StringJoiner joiner = new StringJoiner("");
         for (String s : args) {
-            m = sidesMatcher.matcher(s);
-            if (m.matches()) {
-                String value = m.group(1);
-                try {
-                    sides = Integer.parseInt(value);
-                    if (sides <= 0) {
-                        parseProblem(e, "Number of sides must be positive");
-                        return;
-                    }
-                } catch (NumberFormatException e1) {
-                    parseProblem(e, s + " could not be parsed");
-                    return;
-                }
-                continue;
-            }
-            m = rollSideMatcher.matcher(s);
-            if (m.matches()) {
-                String rollsS = m.group(1);
-                String sidesS = m.group(2);
-                try {
-                    rolls = Integer.parseInt(rollsS);
-                    if (rolls <= 0) {
-                        parseProblem(e, "Number of rolls must be positive");
-                        return;
-                    }
-                } catch (NumberFormatException e1) {
-                    parseProblem(e, "Number of rolls could not be parsed");
-                    return;
-                }
-                try {
-                    sides = Integer.parseInt(sidesS);
-                    if (sides <= 0) {
-                        parseProblem(e, "Number of sides must be positive");
-                        return;
-                    }
-                } catch (NumberFormatException e1) {
-                    parseProblem(e, "Number of sides could not be parsed");
-                    return;
-                }
-            }
-            if (s.matches("[0-9]+")) {
-                try {
-                    rolls = Integer.parseInt(s);
-                    if (rolls <= 0) {
-                        parseProblem(e, "Number of rolls must be positive");
-                        return;
-                    }
-                } catch (NumberFormatException e1) {
-                    parseProblem(e, s + " could not be parsed");
-                    return;
-                }
-            }
+            joiner.add(s);
         }
-        Random rng = new Random();
-        List<Integer> terms = new ArrayList<>();
-        int sum = 0;
-        for (int i = 0; i < rolls; i++) {
-            int x = rng.nextInt(sides) + 1;
-            terms.add(x);
-            sum += x;
+        String noSpace = joiner.toString();
+
+        Map<String, String> results = DiceParser.parseSingleRoll(noSpace);
+        if (results.get("success").equals("false")) {
+            parseProblem(e, results.get("reason"));
+            return;
         }
+        int rolls = Integer.valueOf(results.get("rolls"));
+        int sides = Integer.valueOf(results.get("sides"));
+        long result = Long.valueOf(results.get("result"));
+
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(new Color(0, 193, 255));
         eb.setTitle(String.format("%s's Roll", e.getMember().getEffectiveName()));
         eb.addField("**Dice**", String.format("%dd%d", rolls, sides), false);
-        StringJoiner joiner = new StringJoiner(" + ");
-        for (int i = 0; i < MAX_DISPLAY_ROLLS && i < terms.size(); i++) {
-            joiner.add(Integer.toString(terms.get(i)));
-        }
-        if (terms.size() == MAX_DISPLAY_ROLLS + 1) {
-            joiner.add(Integer.toString(terms.get(MAX_DISPLAY_ROLLS)));
-        } else if (terms.size() > MAX_DISPLAY_ROLLS + 1) {
-            joiner.add(String.format("*<%d more rolls>*", rolls - MAX_DISPLAY_ROLLS));
-        }
         if (rolls > 1) {
-            eb.addField("**Rolls**", joiner.toString(), false);
+            eb.addField("**Rolls**", results.get("formula"), false);
         }
-        eb.addField("**Result**", Integer.toString(sum), false);
+        eb.addField("**Result**", Long.toString(result), false);
         if (sides == 1) {
-            if (sum == 1) eb.addField(null, "***CRIT FAIL***", false);
-            else if (sum == 20) eb.addField(null, "***NAT 20***", false);
+            if (result == 1) eb.addField("", "***CRIT FAIL***", false);
+            else if (result == 20) eb.addField("", "***NAT 20***", false);
         }
         e.getChannel().sendMessage(eb.build()).queue();
     }
 
-    private void parseProblem(MessageReceivedEvent e, String info) {
-        e.getChannel().sendMessage(String.format("Couldn't roll the dice for you %s. Reason: %s", e.getAuthor().getAsMention(), info)).queue();
+    private void parseProblem(MessageReceivedEvent e, String reason) {
+        e.getChannel().sendMessage(String.format("Couldn't roll the dice for you %s. Reason: %s", e.getAuthor().getAsMention(), reason)).queue();
     }
 }
