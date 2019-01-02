@@ -33,6 +33,8 @@ public class Delegator extends ListenerAdapter {
         if (cmdOptional.isPresent()) {
             String command = cmdOptional.get();
             CommandHandler handler =  handlerMap.get(command);
+        } else {
+
         }
     }
 

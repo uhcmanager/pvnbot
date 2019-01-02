@@ -78,4 +78,8 @@ public final class Discord {
         TextChannel tc = (TextChannel) controller.getGuild().getCategoryById(category).createTextChannel(name).complete();
         return tc.getIdLong();
     }
+
+    public static boolean restrictChannel(long channelID, String type) {
+        GuildController controller = getMainController();
+    }
 }

@@ -10,11 +10,8 @@ import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import javax.security.auth.login.LoginException;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.logging.Logger;
 

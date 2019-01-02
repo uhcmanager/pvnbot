@@ -4,7 +4,6 @@ import net.dv8tion.jda.core.JDA;
 import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

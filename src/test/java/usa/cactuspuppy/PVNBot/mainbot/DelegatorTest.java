@@ -3,7 +3,6 @@ package usa.cactuspuppy.PVNBot.mainbot;
 import org.junit.Before;
 import org.junit.Test;
 import usa.cactuspuppy.PVNBot.Main;
-import usa.cactuspuppy.PVNBot.mainbot.Delegator;
 
 import java.util.logging.Logger;
 

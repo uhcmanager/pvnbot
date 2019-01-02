@@ -1,6 +1,5 @@
 package usa.cactuspuppy.PVNBot.mainbot.textCommand;
 
-import lombok.Getter;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public abstract class CommandHandler {
@@ -11,5 +10,5 @@ public abstract class CommandHandler {
      */
     public abstract void onCommand(MessageReceivedEvent e);
 
-    public abstract boolean hasPermission(MessageReceivedEvent e);
+    public boolean hasPermission(MessageReceivedEvent e) { return true; }
 }
