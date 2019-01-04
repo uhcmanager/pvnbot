@@ -41,9 +41,6 @@ public class Main {
         if (logger == null) logger = Logger.getLogger(Main.class.getName());
         startInvBot();
         startMainBot();
-        if (args.length > 0 && args[0].equalsIgnoreCase("true")) {
-            initKeyListener();
-        }
     }
 
     public static void halt() {
@@ -66,39 +63,5 @@ public class Main {
             logger.warning("Could not start main bot");
             e.printStackTrace();
         }
-    }
-
-    public static void initKeyListener() {
-        keyState = 0;
-        if (frame != null) return;
-        frame = new JFrame();
-        JTextField textField = new JTextField();
-        textField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                char pressed = e.getKeyChar();
-                if (keyState == 0) {
-                    if (pressed == ':') {
-                        keyState = 1;
-                        logger.info("Listening for command...");
-                    }
-                } else if (keyState == 1) {
-                    if (pressed == 'q') {
-                        halt();
-                        System.exit(0);
-                    } else if (pressed == 'r') {
-                        logger.info("Restarting...");
-                        invitationJDA.shutdown();
-                        mainJDA.shutdown();
-                        main(argsArr);
-                    }
-                    else keyState = 0;
-                }
-            }
-        });
-        frame.add(textField);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setSize(600, 60);
     }
 }
