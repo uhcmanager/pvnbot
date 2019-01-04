@@ -1,8 +1,8 @@
 package usa.cactuspuppy.PVNBot.mainbot.convo;
 
+import lombok.Getter;
+
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 @Getter

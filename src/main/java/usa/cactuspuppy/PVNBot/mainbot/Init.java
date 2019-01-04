@@ -2,6 +2,7 @@ package usa.cactuspuppy.PVNBot.mainbot;
 
 import net.dv8tion.jda.core.JDA;
 import usa.cactuspuppy.PVNBot.Main;
+import usa.cactuspuppy.PVNBot.mainbot.uhchook.UHCListener;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import java.io.File;
