@@ -1,4 +1,4 @@
-package usa.cactuspuppy.PVNBot.mainbot.uhchook;
+package usa.cactuspuppy.PVNBot.mainbot.hook;
 
 import usa.cactuspuppy.uhc_automation.event.EventListener;
 

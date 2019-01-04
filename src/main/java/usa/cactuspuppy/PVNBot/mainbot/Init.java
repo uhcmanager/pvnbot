@@ -2,8 +2,9 @@ package usa.cactuspuppy.PVNBot.mainbot;
 
 import net.dv8tion.jda.core.JDA;
 import usa.cactuspuppy.PVNBot.Main;
-import usa.cactuspuppy.PVNBot.mainbot.uhchook.UHCListener;
+import usa.cactuspuppy.PVNBot.mainbot.hook.UHCHook;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
+import usa.cactuspuppy.PVNBot.utils.MainData;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +15,13 @@ public class Init {
     public static void main(String[] args) {
         JDA jda = Main.getMainJDA();
         jda.addEventListener(new Delegator());
+        loadData();
+        UHCHook.hook();
+    }
+
+    public static void loadData() {
         createDataFolder();
-        File cmdPrefixFile = new File(Main.getDataPath() + "/mainBot", "cmdPrefix.dat");
+        File cmdPrefixFile = new File(Main.getDataPath() + MainData.DIR.toString(), MainData.CMD_PREFIX.toString());
         if (cmdPrefixFile.isFile()) {
             try {
                 Scanner scan = new Scanner(cmdPrefixFile);
@@ -26,7 +32,7 @@ public class Init {
                 Delegator.setCmdPrefix("!");
             }
         }
-        File mainGuildFile = new File(Main.getDataPath() + "/mainBot", "mainGuild.dat");
+        File mainGuildFile = new File(Main.getDataPath() + MainData.DIR.toString(), MainData.GUILD_ID.toString());
         if (mainGuildFile.isFile()) {
             try {
                 String id = FileIO.readToken(new FileInputStream(mainGuildFile));
