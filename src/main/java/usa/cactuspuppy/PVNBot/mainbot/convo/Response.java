@@ -2,23 +2,31 @@ package usa.cactuspuppy.PVNBot.mainbot.convo;
 
 import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @AllArgsConstructor
 public class Response {
-    private static List<Trigger> triggers = new ArrayList<>();
+    private static Map<Trigger.Priority, List<Trigger>> triggers = new HashMap<>();
+    static {
+        for (Trigger.Priority p : Trigger.Priority.values()) {
+            triggers.put(p, new ArrayList<>());
+        }
+    }
+
     private String content;
 
+    public static void addTrigger(Trigger t) {
+        triggers.get(t.getPriority()).add(t);
+    }
+
     public boolean shouldRespond() {
-        //TODO: Determine if should respond
-        return false;
+        return triggers.keySet().stream().sorted(new Trigger.PriorityComparator()).map(p -> triggers.get(p)).flatMap(Collection::stream).anyMatch(t -> t.getPattern().matcher(content).find());
     }
 
     /**
      * Prepare a response based on the message
-     * @return formattable string with placeholders
-     *
+     * @return formattable string with placeholders<br>
+     * %1$s - Author as mention
      */
     public String get() {
         //TODO: Return a response

@@ -39,7 +39,8 @@ public class Delegator extends ListenerAdapter {
         } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
             Response rep = new Response(e.getMessage().getContentRaw());
             if (rep.shouldRespond()) {
-                String message = String.format("$1", )
+                String message = String.format(rep.get(), e.getAuthor().getAsMention());
+                e.getChannel().sendMessage(message).queue();
             }
         }
     }
