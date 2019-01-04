@@ -1,9 +1,11 @@
 package usa.cactuspuppy.PVNBot.mainbot;
 
 import lombok.Getter;
+import net.dv8tion.jda.core.entities.MessageType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import usa.cactuspuppy.PVNBot.Main;
+import usa.cactuspuppy.PVNBot.mainbot.convo.Response;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
 
@@ -29,12 +31,16 @@ public class Delegator extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
+        if (e.getAuthor().isBot()) return;
         Optional<String> cmdOptional = getCommand(e.getMessage().getContentRaw());
         if (cmdOptional.isPresent()) {
             String command = cmdOptional.get();
             CommandHandler handler =  handlerMap.get(command);
-        } else {
-
+        } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
+            Response rep = new Response(e.getMessage().getContentRaw());
+            if (rep.shouldRespond()) {
+                String message = String.format("$1", )
+            }
         }
     }
 
