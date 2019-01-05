@@ -1,6 +1,7 @@
 package usa.cactuspuppy.PVNBot;
 
 import io.papermc.lib.PaperLib;
+import lombok.Getter;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.annotation.dependency.SoftDependency;
@@ -24,6 +25,8 @@ import org.bukkit.plugin.java.annotation.plugin.author.Author;
 @ApiVersion(ApiVersion.Target.v1_13)
 @SoftDependency("UHC_Automation")
 public class Wrapper extends JavaPlugin {
+    @Getter private static Wrapper instance;
+
     @Override
     public void onEnable() {
         PaperLib.suggestPaper(this);
