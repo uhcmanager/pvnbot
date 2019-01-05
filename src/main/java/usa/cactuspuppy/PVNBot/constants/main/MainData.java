@@ -1,5 +1,8 @@
-package usa.cactuspuppy.PVNBot.utils;
+package usa.cactuspuppy.PVNBot.constants.main;
 
+/**
+ * Saves all data file name constants
+ */
 public enum MainData {
     DIR("/mainBot"),
     CMD_PREFIX( "cmdPrefix.dat"),

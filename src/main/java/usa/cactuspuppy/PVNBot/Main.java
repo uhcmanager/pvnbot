@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import usa.cactuspuppy.PVNBot.constants.main.MainData;
 import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
 import usa.cactuspuppy.PVNBot.mainbot.Init;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
@@ -12,6 +13,7 @@ import javax.security.auth.login.LoginException;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ public class Main {
     @Getter private static JDA mainJDA;
     @Getter @Setter private static Logger logger = null;
     @Getter private static String dataPath = "data"; //where to store data
-    @Getter @Setter private static String mainGuild;
+    @Getter private static String mainGuild;
     private static int keyState = -1;
     private static String[] argsArr = new String[0];
     private static JFrame frame = null;
@@ -63,5 +65,10 @@ public class Main {
             logger.warning("Could not start main bot");
             e.printStackTrace();
         }
+    }
+
+    public static void setMainGuild(String id) {
+        mainGuild = id;
+        FileIO.saveToFile(dataPath + MainData.DIR.toString(), MainData.GUILD_ID.toString(), new ByteArrayInputStream(id.getBytes()), false);
     }
 }

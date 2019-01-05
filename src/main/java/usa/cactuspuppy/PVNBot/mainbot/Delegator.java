@@ -8,11 +8,10 @@ import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.mainbot.convo.Response;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
+import usa.cactuspuppy.PVNBot.utils.FileIO;
+import usa.cactuspuppy.PVNBot.constants.main.MainData;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +35,11 @@ public class Delegator extends ListenerAdapter {
         if (cmdOptional.isPresent()) {
             String command = cmdOptional.get();
             CommandHandler handler =  handlerMap.get(command);
+            if (handler.hasPermission(e)) {
+                handler.onCommand(e);
+            } else {
+                denyPermission(e);
+            }
         } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
             Response rep = new Response(e.getMessage().getContentRaw());
             if (rep.shouldRespond()) {
@@ -43,6 +47,12 @@ public class Delegator extends ListenerAdapter {
                 e.getChannel().sendMessage(message).queue();
             }
         }
+    }
+
+    private static void denyPermission(MessageReceivedEvent e) {
+        e.getChannel().sendMessage(
+                String.format("%1$s You do not have permission to access that command!", e.getAuthor().getAsMention())
+        ).queue();
     }
 
     private static void addHandler(String name, CommandHandler handler) {
@@ -67,12 +77,6 @@ public class Delegator extends ListenerAdapter {
     public static void setCmdPrefix(String s) {
         if (cmdPrefix.equals(s)) return;
         cmdPrefix = s;
-        try {
-            BufferedWriter buffW = new BufferedWriter(new FileWriter(new File(Main.getDataPath() + "/mainBot", "cmdPrefix.dat")));
-            buffW.write(s);
-        } catch (IOException e) {
-            Main.getLogger().warning("Could not write new command prefix to memory");
-            e.printStackTrace();
-        }
+        FileIO.saveToFile(Main.getDataPath() + MainData.DIR.toString(), MainData.CMD_PREFIX.toString(), new ByteArrayInputStream(s.getBytes()), false);
     }
 }

@@ -37,7 +37,11 @@ public final class FileIO {
         try {
             FileWriter w = new FileWriter(file, append);
             BufferedWriter bw = new BufferedWriter(w);
-            FileUtils.copyInputStreamToFile(stream, file);
+            Scanner scanner = new Scanner(stream);
+            while (scanner.hasNext()) {
+                bw.write(scanner.nextLine());
+            }
+            bw.close();
         } catch (IOException e) {
             Main.getLogger().warning("Issue saving to " + file.getPath());
             Main.getLogger().warning(Arrays.toString(e.getStackTrace()));
