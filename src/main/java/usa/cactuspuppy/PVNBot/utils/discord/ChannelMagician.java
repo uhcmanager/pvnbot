@@ -19,7 +19,7 @@ public class ChannelMagician {
      */
     public static void hideChannel(long channelID, ChannelType type, IPermissionHolder holder) throws RuntimeException {
         if (type == null) return;
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
         Guild main = controller.getGuild();
         try {
             if (type.equals(ChannelType.TEXT)) {
@@ -47,7 +47,7 @@ public class ChannelMagician {
      */
     public static void activateChannel(long channelID, ChannelType type, IPermissionHolder holder) throws RuntimeException {
         if (type == null) return;
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
         Guild main = controller.getGuild();
         try {
             if (type.equals(ChannelType.TEXT)) {

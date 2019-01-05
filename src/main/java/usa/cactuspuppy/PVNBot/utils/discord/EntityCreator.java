@@ -14,7 +14,7 @@ public class EntityCreator {
      * @return ID of category, -1 if duplicate is found and not allowed
      */
     public static long createCategory(String name, boolean allowDuplicate) {
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
         //Found a duplicate
         if (!allowDuplicate && !controller.getGuild().getCategoriesByName(name, true).isEmpty()) return -1;
         return controller.createCategory(name).complete().getIdLong();
@@ -27,7 +27,7 @@ public class EntityCreator {
      * @return ID of new role, -1 if a duplicate is found
      */
     public static long createRole(String name, boolean allowDuplicate) {
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
         //Found a duplicate
         if (!allowDuplicate && !controller.getGuild().getRolesByName(name, true).isEmpty()) return -1;
         Role role = controller.createRole().complete();
@@ -44,7 +44,7 @@ public class EntityCreator {
      * @return ID of new channel, -1 if a duplicate is found
      */
     public static long createVoiceChannel(long category, String name, boolean allowDuplicate) {
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
         //Found a duplicate
         if (!allowDuplicate && !controller.getGuild().getVoiceChannelsByName(name, true).isEmpty()) return -1;
         VoiceChannel vc = (VoiceChannel) controller.getGuild().getCategoryById(category).createVoiceChannel(name).complete();
@@ -59,7 +59,7 @@ public class EntityCreator {
      * @return ID of new channel, -1 if a duplicate is found
      */
     public static long createTextChannel(long category, String name, boolean allowDuplicate) {
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
         //Found a duplicate
         if (!allowDuplicate && !controller.getGuild().getTextChannelsByName(name, true).isEmpty()) return -1;
         TextChannel tc = (TextChannel) controller.getGuild().getCategoryById(category).createTextChannel(name).complete();

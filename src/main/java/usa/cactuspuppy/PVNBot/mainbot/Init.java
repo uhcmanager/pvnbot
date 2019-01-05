@@ -36,11 +36,11 @@ public class Init {
         if (mainGuildFile.isFile()) {
             try {
                 String id = FileIO.readToken(new FileInputStream(mainGuildFile));
-                Main.setMainGuild(id);
+                Main.setMainGuildID(id);
             } catch (FileNotFoundException e) {
                 Main.getLogger().warning("Could not find ID file, defaulting to hardcoded value.");
                 e.printStackTrace();
-                Main.setMainGuild("524660535556309020"); //Current PvN server ID
+                Main.setMainGuildID("524660535556309020"); //Current PvN server ID
             }
         }
     }

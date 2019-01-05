@@ -103,7 +103,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>usa.cactuspuppy.PVNInvitation.Main</mainClass>
+                            <mainClass>usa.cactuspuppy.PVNBot.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

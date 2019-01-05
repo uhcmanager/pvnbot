@@ -11,8 +11,6 @@ import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import javax.security.auth.login.LoginException;
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.logging.Logger;
@@ -22,7 +20,7 @@ public class Main {
     @Getter private static JDA mainJDA;
     @Getter @Setter private static Logger logger = null;
     @Getter private static String dataPath = "data"; //where to store data
-    @Getter private static String mainGuild;
+    @Getter private static String mainGuildID;
     private static int keyState = -1;
     private static String[] argsArr = new String[0];
     private static JFrame frame = null;
@@ -67,8 +65,8 @@ public class Main {
         }
     }
 
-    public static void setMainGuild(String id) {
-        mainGuild = id;
+    public static void setMainGuildID(String id) {
+        mainGuildID = id;
         FileIO.saveToFile(dataPath + MainData.DIR.toString(), MainData.GUILD_ID.toString(), new ByteArrayInputStream(id.getBytes()), false);
     }
 }

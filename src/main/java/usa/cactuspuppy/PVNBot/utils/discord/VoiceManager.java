@@ -9,7 +9,7 @@ public class VoiceManager {
         VoiceChannel smaller = (c1.getMembers().size() < c2.getMembers().size() ? c1 : c2);
         VoiceChannel larger = (c1.getMembers().size() < c2.getMembers().size() ? c2 : c1);
 
-        GuildController controller = MainController.get();
+        GuildController controller = MainGuild.getController();
 
         for (Member m : smaller.getMembers()) {
 
