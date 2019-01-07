@@ -21,10 +21,7 @@ public class Main {
     @Getter @Setter private static Logger logger = null;
     @Getter private static String dataPath = "data"; //where to store data
     @Getter private static String mainGuildID;
-    private static int keyState = -1;
-    private static String[] argsArr = new String[0];
-    private static JFrame frame = null;
-
+    @Getter private static long pvnInstanceID;
     /**
      * Entry point for starting all subroutines
      * @param args command line args
@@ -37,14 +34,16 @@ public class Main {
         } catch (Exception e) {
             dataPath = "data";
         }
-        argsArr = args;
         if (logger == null) logger = Logger.getLogger(Main.class.getName());
         startInvBot();
         startMainBot();
     }
 
+    public static void start() {
+        main(new String[0]);
+    }
+
     public static void halt() {
-        keyState = -1;
         logger.info("Shutting down...");
         invitationJDA.shutdown();
         mainJDA.shutdown();
@@ -66,7 +65,7 @@ public class Main {
     }
 
     public static void setMainGuildID(String id) {
-        mainGuildID = id;
+        mainGuildID = "GuildID: " + id;
         FileIO.saveToFile(dataPath + MainData.DIR.toString(), MainData.GUILD_ID.toString(), new ByteArrayInputStream(id.getBytes()), false);
     }
 }

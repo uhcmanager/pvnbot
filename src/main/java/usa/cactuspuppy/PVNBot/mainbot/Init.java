@@ -43,6 +43,12 @@ public class Init {
                 Main.setMainGuildID("524660535556309020"); //Current PvN server ID
             }
         }
+        File pvnInstanceFile = new File(Main.getDataPath() + MainData.DIR.toString(), MainData.PVN_INSTANCE.toString());
+        if (pvnInstanceFile.isFile()) {
+            try {
+
+            }
+        }
     }
 
     public static void createDataFolder() {

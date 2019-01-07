@@ -6,7 +6,8 @@ package usa.cactuspuppy.PVNBot.constants.main;
 public enum MainData {
     DIR("/mainBot"),
     CMD_PREFIX( "cmdPrefix.dat"),
-    GUILD_ID("mainGuild.dat");
+    GUILD_ID("mainGuild.dat"),
+    PVN_INSTANCE("pvnInstanceID.dat");
 
     String value;
     MainData(String value) {

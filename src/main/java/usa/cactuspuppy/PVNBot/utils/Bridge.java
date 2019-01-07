@@ -47,7 +47,7 @@ public final class Bridge {
      * @param player Minecraft player
      * @return ID of the Discord user
      */
-    public static long mcToDiscord(Player player) {
+    public static long mcToDiscord(OfflinePlayer player) {
         return mcToDiscord(player.getName());
     }
 
@@ -57,7 +57,7 @@ public final class Bridge {
      * @return ID of the Discord user
      */
     public static long mcToDiscord(UUID uuid) {
-        return mcToDiscord(Bukkit.getPlayer(uuid).getName());
+        return mcToDiscord(getNameFromUUID(uuid));
     }
 
     /**
@@ -126,5 +126,12 @@ public final class Bridge {
             }
             return null;
         }
+    }
+
+    public static String getNameFromUUID(UUID u) {
+        OfflinePlayer p = Bukkit.getOfflinePlayer(u);
+        if (p != null) return p.getName();
+        //TODO: Query Mojang API for name
+        return null;
     }
 }
