@@ -22,7 +22,7 @@ public class UHCListener extends EventListener {
 
     @Override
     public void onGroupSetTeam(GroupSetTeamEvent e){
-
+        DiscordGroup dg = DiscordGroup.getGroupByID(e.getGroup().getId());
     }
 
     @Override

@@ -4,13 +4,13 @@ import lombok.Getter;
 import usa.cactuspuppy.PVNBot.mainbot.mirror.MirrorManager;
 
 public abstract class MirrorEntity {
-    @Getter private long id;
+    @Getter private long internalID;
 
     public MirrorEntity() {
-        id = MirrorManager.getNewID();
+        internalID = MirrorManager.getNewID();
     }
 
     public static void delete(MirrorEntity e) {
-        MirrorManager.untrackEntity(e.id);
+        MirrorManager.untrackEntity(e.internalID);
     }
 }

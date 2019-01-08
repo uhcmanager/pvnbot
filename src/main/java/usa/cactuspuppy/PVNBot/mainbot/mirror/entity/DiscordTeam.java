@@ -11,7 +11,6 @@ import usa.cactuspuppy.PVNBot.utils.discord.MainGuild;
 import usa.cactuspuppy.uhc_automation.entity.unique.Team;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DiscordTeam extends MirrorEntity {
     private static Map<Long, DiscordTeam> teamIDMap = new HashMap<>();

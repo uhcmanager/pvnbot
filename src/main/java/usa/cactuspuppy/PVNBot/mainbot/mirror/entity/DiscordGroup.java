@@ -9,6 +9,7 @@ import usa.cactuspuppy.PVNBot.utils.discord.EntityCreator;
 import usa.cactuspuppy.PVNBot.utils.discord.EntityMagician;
 import usa.cactuspuppy.PVNBot.utils.discord.MainGuild;
 import usa.cactuspuppy.uhc_automation.entity.unique.Group;
+import usa.cactuspuppy.uhc_automation.entity.unique.Team;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,11 +20,20 @@ public class DiscordGroup extends MirrorEntity {
     @Getter private long groupID;
     @Getter private Group group;
     @Getter private long voiceID;
+    @Getter private DiscordTeam parentTeam;
 
     public DiscordGroup(Group g) {
         groupID = g.getId();
         group = g;
         groupIDMap.put(groupID, this);
+        Team parent = g.getTeam();
+        String name = "Group " + g.getNum();
+        if (parent == null) {
+            voiceID = EntityCreator.createVoiceChannel(-1, name, true);
+        } else {
+            DiscordTeam parentDiscordTeam = DiscordTeam.getDiscordTeamByTeamID(parent.getId());
+            voiceID = EntityCreator.createVoiceChannel(parentDiscordTeam.getCategoryID(), name, true);
+        }
     }
 
     public static DiscordGroup getGroupByID(long id) {
