@@ -10,7 +10,6 @@ import usa.cactuspuppy.PVNBot.mainbot.Init;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import javax.security.auth.login.LoginException;
-import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.logging.Logger;

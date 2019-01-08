@@ -1,6 +1,5 @@
 package usa.cactuspuppy.PVNBot.utils;
 
-import org.apache.commons.io.FileUtils;
 import usa.cactuspuppy.PVNBot.Main;
 
 import java.io.*;

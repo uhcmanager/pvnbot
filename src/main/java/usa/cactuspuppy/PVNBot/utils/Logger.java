@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import usa.cactuspuppy.PVNBot.Wrapper;
 
-import java.util.Optional;
-
 /**
  * Provides feedback to server terminal. Logs at levels SEVERE, WARNING, INFO, FINE, and FINER<br>
  * No other class should report directly to terminal; instead, report messages to this class first to ensure template consistency.

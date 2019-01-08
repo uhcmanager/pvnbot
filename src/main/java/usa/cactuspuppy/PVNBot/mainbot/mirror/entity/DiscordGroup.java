@@ -1,13 +1,7 @@
 package usa.cactuspuppy.PVNBot.mainbot.mirror.entity;
 
 import lombok.Getter;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import usa.cactuspuppy.PVNBot.utils.Bridge;
-import usa.cactuspuppy.PVNBot.utils.Logger;
 import usa.cactuspuppy.PVNBot.utils.discord.EntityCreator;
-import usa.cactuspuppy.PVNBot.utils.discord.EntityMagician;
-import usa.cactuspuppy.PVNBot.utils.discord.MainGuild;
 import usa.cactuspuppy.uhc_automation.entity.unique.Group;
 import usa.cactuspuppy.uhc_automation.entity.unique.Team;
 
