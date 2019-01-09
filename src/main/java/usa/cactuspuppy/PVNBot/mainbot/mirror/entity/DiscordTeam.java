@@ -19,6 +19,7 @@ public class DiscordTeam extends MirrorEntity {
     @Getter private Team team;
     @Getter private long categoryID;
     @Getter private long roleID;
+    private Set<DiscordGroup> groups = new HashSet<>();
     private Set<Long> members = new HashSet<>();
 
     public DiscordTeam(Team team) {
@@ -35,7 +36,7 @@ public class DiscordTeam extends MirrorEntity {
         if (main.getRolesByName(team.getName(), false).size() != 0) {
             roleID = main.getRolesByName(team.getName(), false).get(0).getIdLong();
         } else {
-            roleID = EntityCreator.createCategory(team.getName(), true);
+            roleID = EntityCreator.createRole(team.getName(), true);
         }
         teamID = team.getId();
         this.team = team;
@@ -51,6 +52,21 @@ public class DiscordTeam extends MirrorEntity {
      */
     public Set<Long> getMembers() {
         return new HashSet<>(members);
+    }
+
+    public void addGroup(DiscordGroup g) {
+        groups.add(g);
+    }
+
+    public void removeGroup(DiscordGroup g) {
+        groups.remove(g);
+    }
+
+    /**
+     * @return A copy of {@code groups}
+     */
+    public Set<DiscordGroup> getGroups() {
+        return new HashSet<>(groups);
     }
 
     public void addMembers(Long... members) {
