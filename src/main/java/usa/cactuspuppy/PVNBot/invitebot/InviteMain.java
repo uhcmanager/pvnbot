@@ -85,7 +85,7 @@ public class InviteMain extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.getAuthor().isBot()) return;
         Message message = e.getMessage();
-        String content = message.getContentRaw();
+        String content = message.getContentDisplay();
         if (content.startsWith(";") && Character.isAlphabetic(content.charAt(1))) {
             content = content.substring(1);
             int index = content.indexOf(" ");

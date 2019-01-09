@@ -6,7 +6,7 @@ import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
 public class Ping extends CommandHandler {
 
     @Override
-    public void onCommand(MessageReceivedEvent e) {
+    public void onCommand(MessageReceivedEvent e, String[] args) {
         e.getChannel().sendMessage("Pong!").queue();
     }
 

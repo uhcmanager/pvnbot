@@ -8,7 +8,7 @@ public abstract class CommandHandler {
      * Handles the specific command passed in
      * @param e event in question
      */
-    public abstract void onCommand(MessageReceivedEvent e);
+    public abstract void onCommand(MessageReceivedEvent e, String[] args);
 
     public boolean hasPermission(MessageReceivedEvent e) { return true; }
 }

@@ -9,9 +9,11 @@ import usa.cactuspuppy.PVNBot.constants.main.MainData;
 import usa.cactuspuppy.PVNBot.mainbot.convo.Response;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
+import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Roll;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,22 +28,26 @@ public class Delegator extends ListenerAdapter {
     private static Map<String, CommandHandler> handlerMap = new HashMap<>();
     static {
         addHandler("ping", new Ping());
+        addHandler("roll", new Roll());
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.getAuthor().isBot()) return;
-        Optional<String> cmdOptional = getCommand(e.getMessage().getContentRaw());
+        Optional<String> cmdOptional = getCommand(e.getMessage().getContentDisplay());
         if (cmdOptional.isPresent()) {
             String command = cmdOptional.get();
             CommandHandler handler =  handlerMap.get(command);
             if (handler.hasPermission(e)) {
-                handler.onCommand(e);
+                String[] temp = e.getMessage().getContentDisplay().split(" +");
+                String[] args = new String[temp.length - 1];
+                System.arraycopy(temp, 1, args, 0, temp.length - 1);
+                handler.onCommand(e, args);
             } else {
                 denyPermission(e);
             }
         } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
-            Response rep = new Response(e.getMessage().getContentRaw());
+            Response rep = new Response(e.getMessage().getContentStripped());
             if (rep.shouldRespond()) {
                 String message = String.format(rep.get(), e.getAuthor().getAsMention());
                 e.getChannel().sendMessage(message).queue();

@@ -11,13 +11,7 @@ public class Roll extends CommandHandler {
      * @param e    event in question
      */
     @Override
-    public void onCommand(MessageReceivedEvent e) {
-        String content = e.getMessage().getContentRaw();
-        int index = content.indexOf(" ");
-        if (index == -1) index = content.length();
-        content = content.substring(index).trim();
-        String[] args = content.split("\\s+");
-
+    public void onCommand(MessageReceivedEvent e, String[] args) {
         DiceWrapper.perform(args, e);
     }
 }
