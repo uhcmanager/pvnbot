@@ -41,7 +41,7 @@ public class UHCListener extends EventListener {
     public void onGroupDelete(GroupDeleteEvent e) {
         DiscordGroup dg = DiscordGroup.getGroupByID(e.getGroup().getId());
         if (dg == null) return;
-        dg.
+        dg.delete();
     }
 
     @Override

@@ -1,15 +1,17 @@
 package usa.cactuspuppy.PVNBot.mainbot.mirror.entity;
 
 import lombok.Getter;
+import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.utils.Bridge;
 import usa.cactuspuppy.PVNBot.utils.discord.EntityCreator;
+import usa.cactuspuppy.PVNBot.utils.discord.EntityMagician;
 import usa.cactuspuppy.PVNBot.utils.discord.MainGuild;
 import usa.cactuspuppy.uhc_automation.entity.unique.Group;
 import usa.cactuspuppy.uhc_automation.entity.unique.Team;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DiscordGroup extends MirrorEntity {
     private static Map<Long, DiscordGroup> groupIDMap = new HashMap<>();
@@ -26,8 +28,7 @@ public class DiscordGroup extends MirrorEntity {
         groupIDMap.put(groupID, this);
         Team parent = g.getTeam();
         String name = "Group " + g.getNum();
-        //Convert all UUIDs to players
-        g.getPlayers().stream().map(Bridge::mcToDiscord).filter(l -> l != -1).forEach(members::add);
+        //Create new voice channel
         if (parent == null) {
             voiceID = EntityCreator.createVoiceChannel(-1, name, true);
         } else {
@@ -35,7 +36,10 @@ public class DiscordGroup extends MirrorEntity {
             voiceID = EntityCreator.createVoiceChannel(parentDiscordTeam.getCategoryID(), name, true);
             parentDiscordTeam.addGroup(this);
         }
-        //Pull all members into newly formed voice channel
+        //Set permissions for the new voice channel
+        EntityMagician.hideEntity(voiceID, ChannelType.VOICE, MainGuild.get().getPublicRole());
+        //Add all members from the group
+        g.getPlayers().stream().map(Bridge::mcToDiscord).filter(l -> l != -1).forEach(members::add);
         moveMembersIntoChannel(members.stream().mapToLong(Long::valueOf).toArray());
     }
 
@@ -43,6 +47,8 @@ public class DiscordGroup extends MirrorEntity {
         VoiceChannel vc = MainGuild.get().getVoiceChannelById(voiceID);
         Arrays.stream(memberIDs).mapToObj(MainGuild.get()::getMemberById).forEach(m ->
                 MainGuild.getController().moveVoiceMember(m, vc).queue());
+        //Grant permissions
+        Arrays.stream(memberIDs).mapToObj(MainGuild.get()::getMemberById).forEach(m -> EntityMagician.activateEntity(voiceID, ChannelType.VOICE, m));
     }
 
     /**
@@ -57,7 +63,14 @@ public class DiscordGroup extends MirrorEntity {
         moveMembersIntoChannel(members);
     }
 
+    public void removeMembers(long... members) {
+        Arrays.stream(members).forEach(this.members::remove);
+        //Remove voice permissions
+        Arrays.stream(members).mapToObj(MainGuild.get()::getMemberById).forEach(m -> EntityMagician.hideEntity(voiceID, ChannelType.VOICE, m));
+    }
+
     public void setParentTeam(DiscordTeam parent) {
+        parent.removeGroup(this);
         parentTeam = parent;
     }
 
