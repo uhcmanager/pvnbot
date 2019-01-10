@@ -46,7 +46,10 @@ public class Init {
         File pvnInstanceFile = new File(Main.getDataPath() + MainData.DIR.toString(), MainData.PVN_INSTANCE.toString());
         if (pvnInstanceFile.isFile()) {
             try {
-
+                String gameID = FileIO.readToken(new FileInputStream(pvnInstanceFile));
+                //TODO: Set game ID
+            } catch (FileNotFoundException e) {
+                //TODO: Handle not found
             }
         }
     }
