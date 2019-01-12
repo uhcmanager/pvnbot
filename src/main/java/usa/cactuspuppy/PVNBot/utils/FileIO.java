@@ -1,9 +1,6 @@
 package usa.cactuspuppy.PVNBot.utils;
 
-import usa.cactuspuppy.PVNBot.Main;
-
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public final class FileIO {
@@ -42,8 +39,7 @@ public final class FileIO {
             }
             bw.close();
         } catch (IOException e) {
-            Main.getLogger().warning("Issue saving to " + file.getPath());
-            Main.getLogger().warning(Arrays.toString(e.getStackTrace()));
+            Logger.logWarning(FileIO.class, "Issue saving to " + file.getPath(), e);
         }
     }
 }

@@ -42,7 +42,7 @@ public final class DiceRoller {
                     rolls.add("~~" + r + "~~");
                     dropsCopy.removeFirstOccurrence(r);
                 } else {
-                    rolls.add(String.valueOf(r));
+                    rolls.add("**" + r + "**");
                 }
             }
             return rolls.toString();
