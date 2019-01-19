@@ -1,2 +1,2 @@
 # PVN Bot
-Manages the Pirates vs. Ninjas UHC.
+Manages the Discord for the Pirates vs. Ninjas UHC.
