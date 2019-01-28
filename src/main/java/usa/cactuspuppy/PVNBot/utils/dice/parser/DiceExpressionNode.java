@@ -27,7 +27,10 @@ public class DiceExpressionNode implements ExpressionNode {
     }
 
     public void setValue() {
-        Map<String, String> result = DiceRoller.parseSingleRoll(roll);
-        if (result.get(""))
+        DiceRoller.RollResult result = DiceRoller.parseSingleRoll(roll);
+        if (!result.isSuccess()) {
+            throw new Parser.EvalException(result.getReason());
+        }
+        //TODO: set value
 }
 }

@@ -1,8 +1,6 @@
 package usa.cactuspuppy.PVNBot.utils.dice;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -16,6 +14,7 @@ import java.util.stream.Collectors;
  */
 public final class DiceRoller {
     private static final int MAX_ROLLS = 100;
+    private static final int MAX_SIDES = 9001;
     private static final int MAX_ATTEMPTS = 10000;
     private static Map<Character, RollModifier> rollModifiers = new HashMap<>();
     @Setter private static Random rng = new Random();
@@ -28,7 +27,7 @@ public final class DiceRoller {
 
     @AllArgsConstructor
     @Getter
-    public static class RollResult {
+    public static class Rolls {
         private long result;
         private List<Integer> rolls;
         private List<Integer> drops;
@@ -47,6 +46,18 @@ public final class DiceRoller {
             }
             return rolls.toString();
         }
+    }
+
+    @NoArgsConstructor
+    @Getter
+    @Setter(AccessLevel.PRIVATE)
+    public static class RollResult {
+        private boolean success;
+        private String reason;
+        private int sides;
+        private int rolls;
+        private long result;
+        private String formula;
     }
 
     @AllArgsConstructor
@@ -80,8 +91,8 @@ public final class DiceRoller {
      *     "result" - The final total of the formula<br>
      *     "formula" - All rolls concatenated with " + ", dropped rolls braced by "~~"<br>
      */
-    public static Map<String, String> parseSingleRoll(String command, boolean keepDrops) {
-        Map<String, String> results = new HashMap<>();
+    public static RollResult parseSingleRoll(String command, boolean keepDrops) {
+        RollResult results = new RollResult();
         int rolls = 1;
         int sides;
         int drop = 0;
@@ -92,8 +103,8 @@ public final class DiceRoller {
         Matcher m = p.matcher(command);
         //Check format
         if (!m.matches()) {
-            results.put("success", "false");
-            results.put("reason", "Incorrect formatting");
+            results.setSuccess(false);
+            results.setReason("Incorrect formatting");
             return results;
         }
         //Get rolls
@@ -101,17 +112,17 @@ public final class DiceRoller {
             try {
                 rolls = stringToInt(m.group(1));
                 if (rolls <= 0) {
-                    results.put("success", "false");
-                    results.put("reason", "Number of rolls must be positive");
+                    results.setSuccess(false);
+                    results.setReason("Number of rolls must be positive");
                     return results;
                 } else if (rolls > MAX_ROLLS) {
-                    results.put("success", "false");
-                    results.put("reason", "Number of rolls may not exceed " + MAX_ROLLS);
+                    results.setSuccess(false);
+                    results.setReason("Number of rolls may not exceed " + MAX_ROLLS);
                     return results;
                 }
             } catch (NumberFormatException e) {
-                results.put("success", "false");
-                results.put("reason", e.getMessage());
+                results.setSuccess(false);
+                results.setReason(e.getMessage());
                 return results;
             }
         }
@@ -119,13 +130,17 @@ public final class DiceRoller {
         try {
             sides = stringToInt(m.group(2));
             if (sides <= 0) {
-                results.put("success", "false");
-                results.put("reason", "Number of sides must be positive");
+                results.setSuccess(false);
+                results.setReason("Number of sides must be positive");
+                return results;
+            } else if (sides > MAX_SIDES) {
+                results.setSuccess(false);
+                results.setReason("Number of rolls may not exceed " + MAX_SIDES);
                 return results;
             }
         } catch (NumberFormatException e) {
-            results.put("success", "false");
-            results.put("reason", e.getMessage());
+            results.setSuccess(false);
+            results.setReason(e.getMessage());
             return results;
         }
         //Parse modifiers
@@ -161,33 +176,33 @@ public final class DiceRoller {
                             modifiers = matcher.replaceFirst("").trim(); //eat modifier
                             break;
                         } catch (NumberFormatException e) { //Couldn't extract an int from the trailing numbers
-                            results.put("success", "false");
-                            results.put("reason", e.getMessage());
+                            results.setSuccess(false);
+                            results.setReason(e.getMessage());
                             return results;
                         }
                     }
                 }
                 if (!match) {
-                    results.put("success", "false");
-                    results.put("reason", "Issue parsing modifiers at: " + modifiers);
+                    results.setSuccess(false);
+                    results.setReason("Issue parsing modifiers at: " + modifiers);
                     return results;
                 }
             }
         }
         //ROLL FOR INITIATIVE
-        RollResult rollResult;
+        Rolls rollResult;
         try {
             rollResult = roll(rolls, sides, rerolls, drop, keepDrops);
         } catch (Exception e) {
-            results.put("success", "false");
-            results.put("reason", e.getMessage());
+            results.setSuccess(false);
+            results.setReason(e.getMessage());
             return results;
         }
-        results.put("success", "true");
-        results.put("sides", String.valueOf(sides));
-        results.put("rolls", String.valueOf(rolls));
-        results.put("result", String.valueOf(rollResult.getResult()));
-        results.put("formula", rollResult.toString());
+        results.setSuccess(true);
+        results.setSides(sides);
+        results.setRolls(rolls);
+        results.setResult(rollResult.getResult());
+        results.setFormula(rollResult.toString());
         return results;
     }
 
@@ -196,7 +211,7 @@ public final class DiceRoller {
      * @param command roll command
      * @return the resulting rolls without dropped rolls
      */
-    public static Map<String, String> parseSingleRoll(String command) {
+    public static RollResult parseSingleRoll(String command) {
         return parseSingleRoll(command, false);
     }
 
@@ -206,11 +221,11 @@ public final class DiceRoller {
      * @param sides number of sides on each die
      * @param rerolls If a roll generates any of these values, reroll. (Null or Empty List disables)
      * @param drop How many lowest rolls to drop
-     * @return RollResult representing the rolls
+     * @return Rolls representing the rolls
      * @throws IllegalArgumentException Thrown if any argument is non-sensical (i.e. reroll every possible value)
      * @throws RuntimeException If the roller is unable to get rolls in a reasonable number of iterations
      */
-    public static RollResult roll(int rolls, int sides, List<Integer> rerolls, int drop, boolean keepDrops) throws RuntimeException {
+    public static Rolls roll(int rolls, int sides, List<Integer> rerolls, int drop, boolean keepDrops) throws RuntimeException {
         if (rerolls == null) rerolls = new ArrayList<>();
         //Sanity checks
         if (rolls <= 0) throw new IllegalArgumentException("Number of rolls must be positive");
@@ -231,7 +246,7 @@ public final class DiceRoller {
         }
         int sum = rolled.stream().mapToInt(Integer::intValue).sum();
         if (drop == 0) {
-            return new RollResult(sum, rolled, new ArrayList<>(0));
+            return new Rolls(sum, rolled, new ArrayList<>(0));
         }
         LinkedList<Integer> keep = new LinkedList<>(rolled);
         ArrayList<Integer> dropped = new ArrayList<>(drop);
@@ -241,7 +256,7 @@ public final class DiceRoller {
             keep.removeFirstOccurrence(min);
         }
         sum = keep.stream().mapToInt(Integer::intValue).sum();
-        return new RollResult(sum, (keepDrops ? rolled : keep), (keepDrops ? dropped : new ArrayList<>(0)));
+        return new Rolls(sum, (keepDrops ? rolled : keep), (keepDrops ? dropped : new ArrayList<>(0)));
     }
 
     /**

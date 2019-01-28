@@ -9,15 +9,16 @@ public class Parser {
     private LinkedList<Token> tokens;
     private Token lookahead;
 
-    public void parse(List<Token> tok) {
+    public ExpressionNode parse(List<Token> tok) throws ParserException, EvalException {
         tokens = new LinkedList<>(tok);
         lookahead = tokens.getFirst();
 
-        try {
-            expression();
-        } catch (ParserException | EvalException e) {
-            //TODO: Handle parsing exception
+        ExpressionNode expr = expression();
+        if (lookahead.getTokenID() != Token.EPSILON) {
+            throw new ParserException(String.format("Unexpected symbol %s found", lookahead));
         }
+
+        return expr;
     }
 
     private void nextToken() {
@@ -28,74 +29,112 @@ public class Parser {
         }
     }
 
-    private void expression() throws ParserException {
-        signedTerm();
-        sumOp();
+    private ExpressionNode expression() throws ParserException {
+        ExpressionNode expr = signedTerm();
+        return sumOp(expr);
     }
 
-    private void sumOp() throws ParserException {
+    private ExpressionNode sumOp(ExpressionNode expr) throws ParserException {
         if (lookahead.getTokenID() == Token.ADD_SUB) {
+            AdditionExpressionNode sum;
+            if (expr.getType() == ExpressionNode.ADDITION_NODE) {
+                sum = (AdditionExpressionNode) expr;
+            } else {
+                sum = new AdditionExpressionNode(expr, true);
+            }
+
+            boolean pos = lookahead.getSequence().equals("+");
             nextToken();
-            term();
-            sumOp();
+            ExpressionNode t = term();
+            sum.add(t, pos);
+            return sumOp(sum);
         }
+        return expr;
     }
 
-    private void signedTerm() throws ParserException {
+    private ExpressionNode signedTerm() throws ParserException {
         if (lookahead.getTokenID() == Token.ADD_SUB) {
+            boolean pos = lookahead.getSequence().equals("+");
             nextToken();
-            term();
-        } else {
-            term();
+            ExpressionNode t = term();
+            if (pos) {
+                return t;
+            } else {
+                return new AdditionExpressionNode(t, false);
+            }
         }
+        return term();
     }
 
-    private void term() throws ParserException {
-        factor();
-        termOp();
+    private ExpressionNode term() throws ParserException {
+        ExpressionNode f = factor();
+        return termOp(f);
     }
 
-    private void termOp() throws ParserException {
+    private ExpressionNode termOp(ExpressionNode expr) throws ParserException {
         if (lookahead.getTokenID() == Token.MUL_DIV) {
+            MultiplicationExpressionNode prod;
+
+            if (expr.getType() == ExpressionNode.MULTIPLICATION_NODE) {
+                prod = (MultiplicationExpressionNode) expr;
+            } else {
+                prod = new MultiplicationExpressionNode(expr, true);
+            }
+
+            boolean pos = lookahead.getSequence().equals("*");
             nextToken();
-            signedFactor();
-            termOp();
+            ExpressionNode f = signedFactor();
+            prod.add(f, pos);
+
+            return termOp(prod);
         }
+
+        return expr;
     }
 
-    private void signedFactor() throws ParserException {
+    private ExpressionNode signedFactor() throws ParserException {
         if (lookahead.getTokenID() == Token.ADD_SUB) {
+            boolean pos = lookahead.getSequence().equals("+");
             nextToken();
-            factor();
-        } else {
-            factor();
+            ExpressionNode a = factor();
+            if (pos) {
+                return a;
+            } else {
+                return new AdditionExpressionNode(a, false);
+            }
         }
+        return factor();
     }
 
-    private void factor() throws ParserException {
-        argument();
-        factorOp();
+    private ExpressionNode factor() throws ParserException {
+        ExpressionNode a = argument();
+        return factorOp(a);
     }
 
-    private void factorOp() throws ParserException {
+    private ExpressionNode factorOp(ExpressionNode expr) throws ParserException {
         if (lookahead.getTokenID() == Token.POWER) {
             nextToken();
-            signedFactor();
+            ExpressionNode expon = signedFactor();
+
+            return new ExponentiationExpressionNode(expr, expon);
         }
+
+        return expr;
     }
 
-    private void argument() throws ParserException {
+    private ExpressionNode argument() throws ParserException {
         if (lookahead.getTokenID() == Token.OPEN_PAREN) {
             nextToken();
-            expression();
+            ExpressionNode expr = expression();
 
             if (lookahead.getTokenID() != Token.CLOSE_PAREN) {
                 throw new ParserException("Closing parentheses expected; got " + lookahead.getSequence() + " instead");
             }
 
             nextToken();
+            return expr;
         } else {
-            value();
+            return value();
         }
     }
 
@@ -111,12 +150,12 @@ public class Parser {
             nextToken();
             return expr;
         } else if (lookahead.getTokenID() == Token.DICE) {
-            ExpressionNode expr = new DiceExpressionNode();
+            ExpressionNode expr = new DiceExpressionNode(lookahead.getSequence());
             nextToken();
             return expr;
-        } else {
-            throw new ParserException("Unexpected symbol " + lookahead.getSequence() + " while parsing");
         }
+        if (lookahead.getTokenID() == Token.EPSILON) { throw new ParserException("Unexpected end of input while parsing"); }
+        throw new ParserException("Unexpected symbol " + lookahead.getSequence() + " while parsing");
     }
 
     public static class ParserException extends RuntimeException {

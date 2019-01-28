@@ -70,7 +70,7 @@ public class DiceRollerTest {
     @Test
     public void roll() {
         System.out.println("Printing test drop/no drop results...");
-        DiceRoller.RollResult result = DiceRoller.roll(2, 6, new ArrayList<>(0), 1, true);
+        DiceRoller.Rolls result = DiceRoller.roll(2, 6, new ArrayList<>(0), 1, true);
         System.out.println(result.toString());
         result = DiceRoller.roll(1, 20, new ArrayList<>(0), 0, false);
         System.out.println(result.toString());
