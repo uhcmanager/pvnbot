@@ -78,7 +78,7 @@ public final class DiceRoller {
      *     "sides" - Number of sides on dice rolled<br>
      *     "rolls" - Number of dice rolled<br>
      *     "result" - The final total of the formula<br>
-     *     "formula" - All rolls concatenated with ", ", dropped rolls braced by "~~"<br>
+     *     "formula" - All rolls concatenated with " + ", dropped rolls braced by "~~"<br>
      */
     public static Map<String, String> parseSingleRoll(String command, boolean keepDrops) {
         Map<String, String> results = new HashMap<>();
