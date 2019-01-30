@@ -5,6 +5,7 @@ import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.constants.main.MainData;
 import usa.cactuspuppy.PVNBot.mainbot.hook.UHCHook;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
+import usa.cactuspuppy.PVNBot.utils.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +29,7 @@ public class Init {
                 String prefix = scan.next();
                 scan.close();
                 Delegator.setCmdPrefix(prefix);
+                Logger.logFineMsg(Init.class, "Set command prefix to " + prefix, 0);
             } catch (FileNotFoundException e) {
                 Delegator.setCmdPrefix("!");
             }
@@ -37,6 +39,7 @@ public class Init {
             try {
                 String id = FileIO.readToken(new FileInputStream(mainGuildFile));
                 Main.setMainGuildID(id);
+                Logger.logFineMsg(Init.class, "Set main guild to ID " + id, 0);
             } catch (FileNotFoundException e) {
                 Main.getLogger().warning("Could not find ID file, defaulting to hardcoded value.");
                 e.printStackTrace();

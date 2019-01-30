@@ -10,6 +10,7 @@ import usa.cactuspuppy.PVNBot.mainbot.convo.Response;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.CommandHandler;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Roll;
+import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.SetPrefix;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +29,7 @@ public class Delegator extends ListenerAdapter {
     static {
         addHandler("ping", new Ping());
         addHandler("roll", new Roll());
+        addHandler("setprefix", new SetPrefix());
     }
 
     @Override
