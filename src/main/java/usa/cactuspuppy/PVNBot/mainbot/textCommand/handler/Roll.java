@@ -2,7 +2,6 @@ package usa.cactuspuppy.PVNBot.mainbot.textCommand.handler;
 
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
 import usa.cactuspuppy.PVNBot.utils.dice.DiceWrapper;
 
 import java.util.concurrent.TimeUnit;

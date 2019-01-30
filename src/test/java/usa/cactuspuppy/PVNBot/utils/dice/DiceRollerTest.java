@@ -43,26 +43,26 @@ public class DiceRollerTest {
     @Test
     public void parseSingleRollSimple() {
         DiceRoller.RollResult results = DiceRoller.parseSingleRoll("d20", true);
-        assertEquals(1, results.getResult());
+        assertEquals(1, results.getResult(), 0.01);
     }
 
     @Test
     public void parseSingleRollSingleMods() {
         DiceRoller.RollResult results = DiceRoller.parseSingleRoll("2d20D1", true);
-        assertEquals(2, results.getResult());
+        assertEquals(2, results.getResult(), 0.01);
         testRNG.resetCount();
         results = DiceRoller.parseSingleRoll("3d20k2");
-        assertEquals(5, results.getResult());
+        assertEquals(5, results.getResult(), 0.01);
         testRNG.resetCount();
         results = DiceRoller.parseSingleRoll("3d20r1");
-        assertEquals(9, results.getResult());
+        assertEquals(9, results.getResult(), 0.01);
         testRNG.resetCount();
     }
 
     @Test
     public void parseSingleRollMultiMods() {
         DiceRoller.RollResult results = DiceRoller.parseSingleRoll("3d20k1D1r1");
-        assertEquals(7, results.getResult());
+        assertEquals(7, results.getResult(), 0.01);
         testRNG.resetCount();
     }
 

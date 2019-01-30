@@ -26,6 +26,8 @@ public class MultiplicationExpressionNode extends SequenceExpressionNode {
             } else {
                 if (prod < Double.MIN_VALUE / t.getExpression().getValue()) {
                     throw new Parser.EvalException("Negative overflow while multiplying");
+                } else if (t.getExpression().getValue() == 0) {
+                    throw new Parser.EvalException("Divide by zero error");
                 }
                 prod /= t.getExpression().getValue();
             }

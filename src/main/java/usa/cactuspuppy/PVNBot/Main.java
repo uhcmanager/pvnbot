@@ -38,10 +38,6 @@ public class Main {
         startMainBot();
     }
 
-    public static void start() {
-        main(new String[0]);
-    }
-
     public static void halt() {
         logger.info("Shutting down...");
         invitationJDA.shutdown();

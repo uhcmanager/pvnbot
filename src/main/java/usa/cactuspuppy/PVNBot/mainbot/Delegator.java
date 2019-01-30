@@ -7,13 +7,12 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.constants.main.MainData;
 import usa.cactuspuppy.PVNBot.mainbot.convo.Response;
-import usa.cactuspuppy.PVNBot.mainbot.textCommand.CommandHandler;
+import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.CommandHandler;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Roll;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

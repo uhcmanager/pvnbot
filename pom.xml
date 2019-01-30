@@ -6,7 +6,7 @@
 
     <groupId>usa.cactuspuppy</groupId>
     <artifactId>PVNBot</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
 
     <properties>
         <powermock.version>1.7.1</powermock.version>

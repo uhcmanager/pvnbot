@@ -2,13 +2,16 @@ package usa.cactuspuppy.PVNBot.utils.dice;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.apache.commons.lang.StringUtils;
+import usa.cactuspuppy.PVNBot.utils.dice.parser.ExpressionNode;
+import usa.cactuspuppy.PVNBot.utils.dice.parser.Parser;
+import usa.cactuspuppy.PVNBot.utils.dice.parser.Tokenizer;
 
 import java.awt.*;
-import java.util.Map;
 import java.util.StringJoiner;
 
 public class DiceWrapper {
-    private static final int MAX_FORMULA_LENGTH = 500;
+    private static final int MAX_FORMULA_LENGTH = 20;
     public static void perform(String[] args, MessageReceivedEvent e) {
         StringJoiner joiner = new StringJoiner("");
         for (String s : args) {
@@ -16,27 +19,26 @@ public class DiceWrapper {
         }
         String noSpace = joiner.toString();
 
-        DiceRoller.RollResult results = DiceRoller.parseSingleRoll(noSpace);
-        if (results.isSuccess()) {
-            parseProblem(e, results.getReason());
+        Parser parser = new Parser();
+        ExpressionNode result;
+        double resultValue;
+        try {
+            result = parser.parse(Tokenizer.tokenize(noSpace));
+            resultValue = result.getValue();
+        } catch (Parser.ParserException | Parser.EvalException | Tokenizer.TokenizerException e1) {
+            parseProblem(e, e1.getMessage());
             return;
         }
-        int rolls = results.getRolls();
-        int sides = results.getSides();
-        long result = results.getResult();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(new Color(0, 193, 255));
         eb.setTitle(String.format("%s's Roll", e.getMember().getEffectiveName()));
-        eb.addField("**Dice**", String.format("%dd%d", rolls, sides), false);
-        String formula = results.getFormula();
-        if (formula.length() >= MAX_FORMULA_LENGTH) {
-            formula = formula.substring(0, MAX_FORMULA_LENGTH) + "...";
+        String formula = parser.getFormula();
+        if (StringUtils.countMatches(formula, " ") >= MAX_FORMULA_LENGTH) {
+            formula = formula.substring(0, StringUtils.ordinalIndexOf(formula, " ", MAX_FORMULA_LENGTH)) + "...";
         }
-        if (rolls > 1) {
-            eb.addField("**Rolls**", formula, false);
-        }
-        eb.addField("**Result**", Long.toString(result), false);
+        eb.addField("**Calculation**", formula, false);
+        eb.addField("**Result**", String.valueOf(resultValue), false);
         e.getChannel().sendMessage(eb.build()).queue();
     }
 

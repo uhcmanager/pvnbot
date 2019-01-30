@@ -71,6 +71,7 @@ public class ParserTest {
         Parser testParser = new Parser();
         ExpressionNode expr = testParser.parse(Tokenizer.tokenize("3*2^4 + 4d6 + (1+3)^0.5"));
         System.out.println(testParser.getFormula());
+        assertEquals(60, expr.getValue(), 0.01);
     }
 
     @Test(expected = Parser.ParserException.class)

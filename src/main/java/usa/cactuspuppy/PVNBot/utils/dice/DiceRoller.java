@@ -56,7 +56,7 @@ public final class DiceRoller {
         private String reason;
         private int sides;
         private int rolls;
-        private long result;
+        private double result;
         private String formula;
     }
 

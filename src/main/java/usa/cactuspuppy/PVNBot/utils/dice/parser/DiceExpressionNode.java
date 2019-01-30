@@ -32,6 +32,6 @@ public class DiceExpressionNode implements ExpressionNode {
             throw new Parser.EvalException(result.getReason());
         }
         value = result.getResult();
-        stringRep = result.getFormula();
+        stringRep = "[" + result.getFormula() + "]";
 }
 }
