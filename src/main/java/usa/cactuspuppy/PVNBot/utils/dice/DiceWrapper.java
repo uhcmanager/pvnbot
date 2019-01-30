@@ -17,6 +17,7 @@ public class DiceWrapper {
     public static void command(MessageReceivedEvent e, String[] args) {
         if (!e.getChannel().getName().equals("dice-rolling")) {
             Messaging.sendSnapMsg(String.format("%s PupBot has been instructed to ignore dice roll commands in this channel to avoid spam. Sorry :|", e.getAuthor().getAsMention()), e.getChannel());
+            e.getMessage().delete().queue();
             return;
         }
         DiceWrapper.perform(args, e);

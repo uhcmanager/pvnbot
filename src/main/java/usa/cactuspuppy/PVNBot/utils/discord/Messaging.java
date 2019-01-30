@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class Messaging {
     public static void sendSnapMsg(String msg, MessageChannel channel) {
-        sendSnapMsg(msg, channel, 5, TimeUnit.SECONDS);
+        sendSnapMsg(msg, channel, 7, TimeUnit.SECONDS);
     }
 
     public static void sendSnapMsg(String msg, MessageChannel channel, long time, TimeUnit unit) {
