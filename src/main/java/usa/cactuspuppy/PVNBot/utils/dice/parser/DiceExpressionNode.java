@@ -2,15 +2,17 @@ package usa.cactuspuppy.PVNBot.utils.dice.parser;
 
 import usa.cactuspuppy.PVNBot.utils.dice.DiceRoller;
 
-import java.util.Map;
-
 public class DiceExpressionNode implements ExpressionNode {
-    private String roll;
+    /**
+     * How this dice roll should be represented in the formula
+     */
+    private String stringRep;
     private double value;
     private boolean valueSet = false;
 
-    public DiceExpressionNode(String roll) {
-        this.roll = roll;
+    public DiceExpressionNode(String stringRep) {
+        this.stringRep = stringRep;
+        setValue();
     }
 
     @Override
@@ -27,10 +29,12 @@ public class DiceExpressionNode implements ExpressionNode {
     }
 
     public void setValue() {
-        DiceRoller.RollResult result = DiceRoller.parseSingleRoll(roll);
+        DiceRoller.RollResult result = DiceRoller.parseSingleRoll(stringRep);
         if (!result.isSuccess()) {
             throw new Parser.EvalException(result.getReason());
         }
-        //TODO: set value
+        value = result.getResult();
+        stringRep = result.getFormula();
+        valueSet = true;
 }
 }

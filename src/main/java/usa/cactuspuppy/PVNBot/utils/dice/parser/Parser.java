@@ -29,12 +29,12 @@ public class Parser {
         }
     }
 
-    private ExpressionNode expression() throws ParserException {
+    private ExpressionNode expression() {
         ExpressionNode expr = signedTerm();
         return sumOp(expr);
     }
 
-    private ExpressionNode sumOp(ExpressionNode expr) throws ParserException {
+    private ExpressionNode sumOp(ExpressionNode expr) {
         if (lookahead.getTokenID() == Token.ADD_SUB) {
             AdditionExpressionNode sum;
             if (expr.getType() == ExpressionNode.ADDITION_NODE) {
@@ -52,7 +52,7 @@ public class Parser {
         return expr;
     }
 
-    private ExpressionNode signedTerm() throws ParserException {
+    private ExpressionNode signedTerm() {
         if (lookahead.getTokenID() == Token.ADD_SUB) {
             boolean pos = lookahead.getSequence().equals("+");
             nextToken();
@@ -66,12 +66,12 @@ public class Parser {
         return term();
     }
 
-    private ExpressionNode term() throws ParserException {
+    private ExpressionNode term() {
         ExpressionNode f = factor();
         return termOp(f);
     }
 
-    private ExpressionNode termOp(ExpressionNode expr) throws ParserException {
+    private ExpressionNode termOp(ExpressionNode expr) {
         if (lookahead.getTokenID() == Token.MUL_DIV) {
             MultiplicationExpressionNode prod;
 
@@ -92,7 +92,7 @@ public class Parser {
         return expr;
     }
 
-    private ExpressionNode signedFactor() throws ParserException {
+    private ExpressionNode signedFactor() {
         if (lookahead.getTokenID() == Token.ADD_SUB) {
             boolean pos = lookahead.getSequence().equals("+");
             nextToken();
@@ -106,12 +106,12 @@ public class Parser {
         return factor();
     }
 
-    private ExpressionNode factor() throws ParserException {
+    private ExpressionNode factor() {
         ExpressionNode a = argument();
         return factorOp(a);
     }
 
-    private ExpressionNode factorOp(ExpressionNode expr) throws ParserException {
+    private ExpressionNode factorOp(ExpressionNode expr) {
         if (lookahead.getTokenID() == Token.POWER) {
             nextToken();
             ExpressionNode expon = signedFactor();
@@ -122,7 +122,7 @@ public class Parser {
         return expr;
     }
 
-    private ExpressionNode argument() throws ParserException {
+    private ExpressionNode argument() {
         if (lookahead.getTokenID() == Token.OPEN_PAREN) {
             nextToken();
             ExpressionNode expr = expression();
@@ -138,7 +138,7 @@ public class Parser {
         }
     }
 
-    private ExpressionNode value() throws ParserException {
+    private ExpressionNode value() {
         if (lookahead.getTokenID() == Token.NUMBER) {
             double value;
             try {

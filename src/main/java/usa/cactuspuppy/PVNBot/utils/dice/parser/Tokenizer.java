@@ -1,7 +1,9 @@
 package usa.cactuspuppy.PVNBot.utils.dice.parser;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -37,6 +39,7 @@ public class Tokenizer {
 
     @AllArgsConstructor
     @Getter
+    @Setter(AccessLevel.PACKAGE)
     public static class Token {
         public static final int EPSILON = 0;
         public static final int DICE = 1;
