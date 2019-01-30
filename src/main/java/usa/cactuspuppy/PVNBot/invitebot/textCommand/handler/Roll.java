@@ -13,6 +13,6 @@ public class Roll extends TextCommandHandler {
      */
     @Override
     public void onCommand(String[] args, MessageReceivedEvent e) {
-        DiceWrapper.perform(args, e);
+        DiceWrapper.command(e, args);
     }
 }

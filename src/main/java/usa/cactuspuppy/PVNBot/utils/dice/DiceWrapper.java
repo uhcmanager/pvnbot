@@ -6,12 +6,22 @@ import org.apache.commons.lang.StringUtils;
 import usa.cactuspuppy.PVNBot.utils.dice.parser.ExpressionNode;
 import usa.cactuspuppy.PVNBot.utils.dice.parser.Parser;
 import usa.cactuspuppy.PVNBot.utils.dice.parser.Tokenizer;
+import usa.cactuspuppy.PVNBot.utils.discord.Messaging;
 
 import java.awt.*;
 import java.util.StringJoiner;
 
 public class DiceWrapper {
     private static final int MAX_FORMULA_LENGTH = 20;
+
+    public static void command(MessageReceivedEvent e, String[] args) {
+        if (!e.getChannel().getName().equals("dice-rolling")) {
+            Messaging.sendSnapMsg(String.format("%s PupBot has been instructed to ignore dice roll commands in this channel to avoid spam. Sorry :|", e.getAuthor().getAsMention()), e.getChannel());
+            return;
+        }
+        DiceWrapper.perform(args, e);
+    }
+
     public static void perform(String[] args, MessageReceivedEvent e) {
         StringJoiner joiner = new StringJoiner("");
         for (String s : args) {
