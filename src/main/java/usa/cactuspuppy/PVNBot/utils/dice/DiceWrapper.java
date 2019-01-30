@@ -16,20 +16,20 @@ public class DiceWrapper {
         }
         String noSpace = joiner.toString();
 
-        Map<String, String> results = DiceRoller.parseSingleRoll(noSpace);
-        if (results.get("success").equals("false")) {
-            parseProblem(e, results.get("reason"));
+        DiceRoller.RollResult results = DiceRoller.parseSingleRoll(noSpace);
+        if (results.isSuccess()) {
+            parseProblem(e, results.getReason());
             return;
         }
-        int rolls = Integer.valueOf(results.get("rolls"));
-        int sides = Integer.valueOf(results.get("sides"));
-        long result = Long.valueOf(results.get("result"));
+        int rolls = results.getRolls();
+        int sides = results.getSides();
+        long result = results.getResult();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setColor(new Color(0, 193, 255));
         eb.setTitle(String.format("%s's Roll", e.getMember().getEffectiveName()));
         eb.addField("**Dice**", String.format("%dd%d", rolls, sides), false);
-        String formula = results.get("formula");
+        String formula = results.getFormula();
         if (formula.length() >= MAX_FORMULA_LENGTH) {
             formula = formula.substring(0, MAX_FORMULA_LENGTH) + "...";
         }

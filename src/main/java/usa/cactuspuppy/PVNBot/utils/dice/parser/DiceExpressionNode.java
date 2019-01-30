@@ -1,14 +1,15 @@
 package usa.cactuspuppy.PVNBot.utils.dice.parser;
 
+import lombok.Getter;
 import usa.cactuspuppy.PVNBot.utils.dice.DiceRoller;
 
 public class DiceExpressionNode implements ExpressionNode {
     /**
      * How this dice roll should be represented in the formula
      */
+    @Getter
     private String stringRep;
     private double value;
-    private boolean valueSet = false;
 
     public DiceExpressionNode(String stringRep) {
         this.stringRep = stringRep;
@@ -22,9 +23,6 @@ public class DiceExpressionNode implements ExpressionNode {
 
     @Override
     public double getValue() {
-        if (!valueSet) {
-            setValue();
-        }
         return value;
     }
 
@@ -35,6 +33,5 @@ public class DiceExpressionNode implements ExpressionNode {
         }
         value = result.getResult();
         stringRep = result.getFormula();
-        valueSet = true;
 }
 }

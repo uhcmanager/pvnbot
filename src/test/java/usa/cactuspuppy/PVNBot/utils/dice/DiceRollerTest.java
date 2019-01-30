@@ -4,14 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
 public class DiceRollerTest {
     private TestRNG testRNG = new TestRNG();
-    public class TestRNG extends Random {
+    public static class TestRNG extends Random {
         private int count = 0;
         @Override
         public int nextInt() {
@@ -23,7 +22,7 @@ public class DiceRollerTest {
             return count++ % bound;
         }
 
-        public void resetCount() { count = 0; }
+        void resetCount() { count = 0; }
     }
 
     @Before
@@ -43,27 +42,27 @@ public class DiceRollerTest {
 
     @Test
     public void parseSingleRollSimple() {
-        Map<String, String> results = DiceRoller.parseSingleRoll("d20", true);
-        assertEquals("1", results.get("result"));
+        DiceRoller.RollResult results = DiceRoller.parseSingleRoll("d20", true);
+        assertEquals(1, results.getResult());
     }
 
     @Test
     public void parseSingleRollSingleMods() {
-        Map<String, String> results = DiceRoller.parseSingleRoll("2d20D1", true);
-        assertEquals("2", results.get("result"));
+        DiceRoller.RollResult results = DiceRoller.parseSingleRoll("2d20D1", true);
+        assertEquals(2, results.getResult());
         testRNG.resetCount();
         results = DiceRoller.parseSingleRoll("3d20k2");
-        assertEquals("5", results.get("result"));
+        assertEquals(5, results.getResult());
         testRNG.resetCount();
         results = DiceRoller.parseSingleRoll("3d20r1");
-        assertEquals("9", results.get("result"));
+        assertEquals(9, results.getResult());
         testRNG.resetCount();
     }
 
     @Test
     public void parseSingleRollMultiMods() {
-        Map<String, String> results = DiceRoller.parseSingleRoll("3d20k1D1r1");
-        assertEquals("7", results.get("result"));
+        DiceRoller.RollResult results = DiceRoller.parseSingleRoll("3d20k1D1r1");
+        assertEquals(7, results.getResult());
         testRNG.resetCount();
     }
 

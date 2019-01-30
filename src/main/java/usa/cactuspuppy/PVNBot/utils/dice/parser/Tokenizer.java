@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -15,15 +16,15 @@ import java.util.regex.Pattern;
  * Tokenizes an input string for parsing
  */
 public class Tokenizer {
-    private static Map<Integer, TokenDef> tokenDefs = new HashMap<>();
+    private static Map<Integer, TokenDef> tokenDefs = new LinkedHashMap<>();
     static {
-        addTokenDef("(\\d*)d(\\d+)(\\w+)", 1); //dice rolls
-        addTokenDef("\\(", 2); //open paren
-        addTokenDef("\\)", 3); //close paren
-        addTokenDef("[+-]", 4); //add & sub
-        addTokenDef("[*/]", 5); //mul & div
-        addTokenDef("\\^", 6); //power
-        addTokenDef("[0-9]+", 7); //numbers
+        addTokenDef("(\\d*)d(\\d+)(\\w*)", Token.DICE); //dice rolls
+        addTokenDef("\\(", Token.OPEN_PAREN); //open paren
+        addTokenDef("\\)", Token.CLOSE_PAREN); //close paren
+        addTokenDef("-?[0-9]+\\.?[0-9]*", Token.NUMBER); //numbers before add/sub to make sure we capture negative numbers
+        addTokenDef("[+-]", Token.ADD_SUB); //add & sub
+        addTokenDef("[*/]", Token.MUL_DIV); //mul & div
+        addTokenDef("\\^", Token.POWER); //power
     }
 
     public static void addTokenDef(String regex, int token) {
@@ -62,6 +63,7 @@ public class Tokenizer {
             for (TokenDef def : tokenDefs.values()) { //check all possible tokens for match
                 Matcher m = def.getPattern().matcher(s);
                 if (m.find()) {
+                    if (def.getTokenID() == Token.NUMBER && (!tokens.isEmpty() && tokens.getLast().getTokenID() == Token.NUMBER)) { continue; } //Prevent subtraction from being called a negative number
                     found = true;
                     String seq = m.group().trim();
                     tokens.add(new Token(def.getTokenID(), seq));
