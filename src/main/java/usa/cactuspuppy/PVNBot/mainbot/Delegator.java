@@ -37,6 +37,10 @@ public class Delegator extends ListenerAdapter {
         if (cmdOptional.isPresent()) {
             String command = cmdOptional.get();
             CommandHandler handler =  handlerMap.get(command);
+            if (handler == null) {
+                e.getChannel().sendMessage(String.format("%s Unknown command `%s`", e.getAuthor().getAsMention(), command)).queue();
+                return;
+            }
             if (handler.hasPermission(e)) {
                 String[] temp = e.getMessage().getContentDisplay().split(" +");
                 String[] args = new String[temp.length - 1];
