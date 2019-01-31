@@ -38,6 +38,12 @@ public class Trigger {
         }
     }
 
+    Trigger(String regex, Type type, Priority priority) {
+        this.pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        this.type = type;
+        this.priority = priority;
+    }
+
     public static class PriorityComparator implements Comparator<Priority> {
         @Override
         public int compare(Priority o1, Priority o2) {
