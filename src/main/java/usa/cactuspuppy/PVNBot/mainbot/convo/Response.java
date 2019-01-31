@@ -6,7 +6,7 @@ import java.util.*;
 
 @AllArgsConstructor
 public class Response {
-    private static Map<Trigger.Priority, List<Trigger>> triggers = new HashMap<>();
+    private static LinkedHashMap<Trigger.Priority, List<Trigger>> triggers = new LinkedHashMap<>();
     static {
         for (Trigger.Priority p : Trigger.Priority.values()) {
             triggers.put(p, new ArrayList<>());

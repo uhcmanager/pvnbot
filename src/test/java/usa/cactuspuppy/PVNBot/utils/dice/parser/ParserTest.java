@@ -26,6 +26,7 @@ public class ParserTest {
         void resetCount() { count = 0; }
     }
 
+    //Set RNG to output 1,2,3... for predictability
     @Before
     public void setUp() throws Exception {
         DiceRoller.setRng(testRNG);
@@ -72,6 +73,45 @@ public class ParserTest {
         ExpressionNode expr = testParser.parse(Tokenizer.tokenize("3*2^4 + 4d6 + (1+3)^0.5"));
         System.out.println(testParser.getFormula());
         assertEquals(60, expr.getValue(), 0.01);
+    }
+
+    @Test
+    public void testDivision() {
+        Parser testParser = new Parser();
+        ExpressionNode expr = testParser.parse(Tokenizer.tokenize("1/2"));
+        System.out.println(testParser.getFormula());
+        assertEquals(0.5, expr.getValue(), 0.01);
+
+        testParser = new Parser();
+        expr = testParser.parse(Tokenizer.tokenize("-1/2"));
+        System.out.println(testParser.getFormula());
+        assertEquals(-0.5, expr.getValue(), 0.01);
+    }
+
+    @Test
+    public void testZero() {
+        Parser testParser = new Parser();
+        ExpressionNode expr = testParser.parse(Tokenizer.tokenize("1*0"));
+        System.out.println(testParser.getFormula());
+        assertEquals(0, expr.getValue(), 0.01);
+
+        testParser = new Parser();
+        expr = testParser.parse(Tokenizer.tokenize("1+0"));
+        System.out.println(testParser.getFormula());
+        assertEquals(1, expr.getValue(), 0.01);
+
+        testParser = new Parser();
+        expr = testParser.parse(Tokenizer.tokenize("2-0"));
+        System.out.println(testParser.getFormula());
+        assertEquals(2, expr.getValue(), 0.01);
+    }
+
+    @Test(expected = Parser.EvalException.class)
+    public void testDiv0() {
+        Parser testParser = new Parser();
+        ExpressionNode expr = testParser.parse(Tokenizer.tokenize("1/0"));
+        System.out.println(testParser.getFormula());
+        assertEquals(0, expr.getValue(), 0.01);
     }
 
     @Test(expected = Parser.ParserException.class)

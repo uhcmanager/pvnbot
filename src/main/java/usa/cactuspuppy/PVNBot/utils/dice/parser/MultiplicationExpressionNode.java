@@ -18,15 +18,19 @@ public class MultiplicationExpressionNode extends SequenceExpressionNode {
     public double getValue() throws Parser.EvalException {
         double prod = 1.0;
         for (Term t : terms) {
-            if (t.getExpression().getValue() > 0) {
-                if (prod > Double.MAX_VALUE / t.getExpression().getValue()) {
-                    throw new Parser.EvalException("Positive overflow while multiplying");
+            if (t.isPositive()) {
+                if (t.getExpression().getValue() > 0) {
+                    if (prod > Double.MAX_VALUE / t.getExpression().getValue()) {
+                        throw new Parser.EvalException("Positive overflow while multiplying");
+                    }
+                } else if (t.getExpression().getValue() < 0) {
+                    if (prod < Double.MIN_VALUE / t.getExpression().getValue()) {
+                        throw new Parser.EvalException("Negative overflow while multiplying");
+                    }
                 }
                 prod *= t.getExpression().getValue();
             } else {
-                if (prod < Double.MIN_VALUE / t.getExpression().getValue()) {
-                    throw new Parser.EvalException("Negative overflow while multiplying");
-                } else if (t.getExpression().getValue() == 0) {
+                if (t.getExpression().getValue() == 0) {
                     throw new Parser.EvalException("Divide by zero error");
                 }
                 prod /= t.getExpression().getValue();

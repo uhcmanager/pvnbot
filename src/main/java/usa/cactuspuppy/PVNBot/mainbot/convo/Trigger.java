@@ -1,21 +1,18 @@
 package usa.cactuspuppy.PVNBot.mainbot.convo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
 @Getter
+@AllArgsConstructor
 public class Trigger {
     private Pattern pattern;
     private Type type;
     private Priority priority;
 
-    public Trigger(String regex, Type t, Priority p) {
-        pattern = Pattern.compile(regex);
-        type = t;
-        priority = p;
-    }
 
     public enum Type {
         POSITIVE,
