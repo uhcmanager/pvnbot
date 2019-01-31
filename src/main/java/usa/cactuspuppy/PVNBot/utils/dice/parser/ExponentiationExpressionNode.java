@@ -14,6 +14,12 @@ public class ExponentiationExpressionNode implements ExpressionNode {
 
     @Override
     public double getValue() {
-        return Math.pow(base.getValue(), exponent.getValue());
+        double value = Math.pow(base.getValue(), exponent.getValue());
+        if (Double.isInfinite(value)) {
+            throw new Parser.EvalException("Overflow while evaluating " + base.getValue() + "^" + exponent.getValue());
+        } else if (Double.isNaN(value)) {
+            throw new Parser.EvalException("NaN error while evaluating " + base.getValue() + "^" + exponent.getValue());
+        }
+        return value;
     }
 }
