@@ -4,6 +4,7 @@ import lombok.Setter;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -94,6 +95,8 @@ public class InviteMain extends ListenerAdapter {
             content = content.substring(index).trim();
             String[] args = content.split("\\s+");
             TextCommandDelegator.delegate(command, args, e);
+        } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
+
         }
     }
 
