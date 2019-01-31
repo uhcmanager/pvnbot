@@ -1,6 +1,8 @@
-package usa.cactuspuppy.PVNBot.mainbot.convo;
+package usa.cactuspuppy.PVNBot.utils.convo;
 
 import lombok.AllArgsConstructor;
+import net.dv8tion.jda.core.entities.MessageType;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.*;
 
@@ -97,5 +99,15 @@ public class Response {
         int index = rng.nextInt(bound);
         //Return random response
         return responses.get(type).get(index);
+    }
+
+    public static void formResponse(MessageReceivedEvent e) {
+        if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
+            Response rep = new Response(e.getMessage().getContentStripped());
+            if (rep.shouldRespond()) {
+                String response = String.format(rep.get(), e.getAuthor().getAsMention());
+                e.getChannel().sendMessage(response).queue();
+            }
+        }
     }
 }

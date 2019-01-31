@@ -6,7 +6,8 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.constants.main.MainData;
-import usa.cactuspuppy.PVNBot.mainbot.convo.Response;
+import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
+import usa.cactuspuppy.PVNBot.utils.convo.Response;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.CommandHandler;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
 import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Roll;
@@ -19,6 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static usa.cactuspuppy.PVNBot.utils.convo.Response.formResponse;
 
 /**
  * Responsible for delegating tasks for main bot
@@ -51,12 +54,8 @@ public class Delegator extends ListenerAdapter {
             } else {
                 denyPermission(e);
             }
-        } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
-            Response rep = new Response(e.getMessage().getContentStripped());
-            if (rep.shouldRespond()) {
-                String message = String.format(rep.get(), e.getAuthor().getAsMention());
-                e.getChannel().sendMessage(message).queue();
-            }
+        } else {
+            formResponse(e);
         }
     }
 
