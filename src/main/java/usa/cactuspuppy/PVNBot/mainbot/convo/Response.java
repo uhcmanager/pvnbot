@@ -49,11 +49,14 @@ public class Response {
                 }
             }
         }
+        //If no type found (for some reason), return early
         if (type == null) return null;
         Random rng = new Random();
         int bound = responses.get(type).size();
+        //If no responses found, return early
         if (bound == 0) return null;
         int index = rng.nextInt(bound);
+        //Return random response
         return responses.get(type).get(index);
     }
 }
