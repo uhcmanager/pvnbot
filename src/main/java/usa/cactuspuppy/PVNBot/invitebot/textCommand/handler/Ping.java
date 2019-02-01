@@ -1,7 +1,6 @@
 package usa.cactuspuppy.PVNBot.invitebot.textCommand.handler;
 
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
 
 public class Ping extends TextCommandHandler {
     /**

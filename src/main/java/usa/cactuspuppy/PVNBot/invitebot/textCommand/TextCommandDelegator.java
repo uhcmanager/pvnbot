@@ -2,10 +2,8 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand;
 
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Bind;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Help;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Ping;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Roll;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.*;
+import usa.cactuspuppy.PVNBot.utils.discord.Messaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +15,7 @@ public class TextCommandDelegator {
         addHandler("help", new Help());
         addHandler("bind", new Bind());
         addHandler("roll", new Roll());
+        addHandler("echo", new Echo());
     }
 
     static void addHandler(String name, TextCommandHandler handler) {
@@ -31,12 +30,12 @@ public class TextCommandDelegator {
                 String mention = e.getAuthor().getAsMention();
                 e.getChannel().sendMessage(String.format("%s Unknown command `%s`. Type `;help` for a list of commands.", mention, command)).queue();
             } else {
-                e.getChannel().sendMessage(String.format("Unknown command `%s`. Type `;help` for a list of commands.", command)).queue();
+                Messaging.sendSnapMsg(String.format("Unknown command `%s`. Type `;help` for a list of commands.", command), e.getChannel());
             }
             return;
         }
         if (!handler.hasPermission(args, e)) {
-            e.getChannel().sendMessage(String.format("You do not have permission to run this command %s.", e.getAuthor().getAsMention())).queue();
+            e.getMessage().delete().queue();
             return;
         }
         handler.onCommand(args, e);

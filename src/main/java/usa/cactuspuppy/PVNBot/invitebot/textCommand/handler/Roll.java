@@ -1,7 +1,6 @@
 package usa.cactuspuppy.PVNBot.invitebot.textCommand.handler;
 
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
 import usa.cactuspuppy.PVNBot.utils.dice.DiceWrapper;
 
 public class Roll extends TextCommandHandler {
