@@ -111,7 +111,9 @@ public final class Generator {
 
     public static void fullHandler(String[] args, MessageReceivedEvent e) {
         if (args.length < 3) {
-            e.getChannel().sendMessage(e.getAuthor().getAsMention()).queue();
+            e.getChannel().sendMessage(e.getAuthor().getAsMention() +
+                    " Usage: `;minesweep <width> <height> <bombs>").queue();
+            return;
         }
         int width;
         int height;
