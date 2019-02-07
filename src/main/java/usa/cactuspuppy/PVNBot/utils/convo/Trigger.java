@@ -1,4 +1,4 @@
-package usa.cactuspuppy.PVNBot.mainbot.convo;
+package usa.cactuspuppy.PVNBot.utils.convo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

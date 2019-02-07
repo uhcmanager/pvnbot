@@ -2,7 +2,6 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand.handler;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
 
 import java.awt.*;
 
@@ -15,7 +14,7 @@ public class Help extends TextCommandHandler {
                 "Command for everyone!\n" +
                         "**;help** - Shows this page\n" +
                         "**;ping** - Pong! Heartbeat command.\n" +
-                        "**;roll** *<# rolls> d<# sides>* - Rolls dice. Makes Remmy happy.",
+                        "**;roll** *expression* - Rolls dice. Makes Remmy happy.",
                 false);
         eb.addField("**Admin Commands**",
                 "To use these commands, you must have a higher role than the bot's highest role\n" +

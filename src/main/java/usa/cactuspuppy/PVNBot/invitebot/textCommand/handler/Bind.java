@@ -7,7 +7,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandHandler;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;

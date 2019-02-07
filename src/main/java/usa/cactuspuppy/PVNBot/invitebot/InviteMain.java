@@ -11,12 +11,15 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.invitebot.textCommand.TextCommandDelegator;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
+import usa.cactuspuppy.PVNBot.utils.convo.Response;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+
+import static usa.cactuspuppy.PVNBot.utils.convo.Response.formResponse;
 
 public class InviteMain extends ListenerAdapter {
     @Setter private static String channelID;
@@ -95,10 +98,12 @@ public class InviteMain extends ListenerAdapter {
             content = content.substring(index).trim();
             String[] args = content.split("\\s+");
             TextCommandDelegator.delegate(command, args, e);
-        } else if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
-
+        } else {
+            formResponse(e);
         }
     }
+
+
 
     @Override
     public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {

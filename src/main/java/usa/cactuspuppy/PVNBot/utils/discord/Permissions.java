@@ -1,9 +1,7 @@
 package usa.cactuspuppy.PVNBot.utils.discord;
 
-import net.dv8tion.jda.core.entities.IPermissionHolder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
-import usa.cactuspuppy.PVNBot.Main;
 
 import java.util.List;
 
@@ -29,7 +27,7 @@ public final class Permissions {
             mRoles.retainAll(botOp);
             return mRoles.isEmpty();
         } else {
-            return m.getRoles().get(0).getPosition() >= MainGuild.get().getSelfMember().getRoles().get(0).getPosition();
+            return m.getRoles().get(0).getPosition() >= m.getGuild().getSelfMember().getRoles().get(0).getPosition();
         }
     }
 }

@@ -1,6 +1,8 @@
-package usa.cactuspuppy.PVNBot.mainbot.convo;
+package usa.cactuspuppy.PVNBot.utils.convo;
 
 import lombok.AllArgsConstructor;
+import net.dv8tion.jda.core.entities.MessageType;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.*;
 
@@ -17,7 +19,7 @@ public class Response {
         }
         //TODO: Add triggers
         //Neutral
-        addTrigger(new Trigger("PupBot", Trigger.Type.NEUTRAL, Trigger.Priority.LOW));
+        addTrigger(new Trigger("PupBot", Trigger.Type.NEUTRAL, Trigger.Priority.LOWER));
         //Positive
         addTrigger(new Trigger("PupBot.*great", Trigger.Type.POSITIVE, Trigger.Priority.NORMAL));
         addTrigger(new Trigger("PupBot.*good", Trigger.Type.POSITIVE, Trigger.Priority.NORMAL));
@@ -31,7 +33,7 @@ public class Response {
         addTrigger(new Trigger("PupBot.*sucks", Trigger.Type.NEGATIVE, Trigger.Priority.NORMAL));
         addTrigger(new Trigger("PupBot.*suck", Trigger.Type.NEGATIVE, Trigger.Priority.NORMAL));
         //Question
-        addTrigger(new Trigger("PupBot.*\\?", Trigger.Type.QUESTION, Trigger.Priority.LOW));
+        addTrigger(new Trigger("PupBot.*\\?", Trigger.Type.QUESTION, Trigger.Priority.HIGH));
         //TODO: Add reponses
         /*NOTE: The response will be put through String.format, where:
         * %1$s - author as mention
@@ -40,17 +42,23 @@ public class Response {
         addNeutralResponse("%1$s That is I, how may I help?");
         addNeutralResponse("%1$s Instructions unclear, deeper recursion required");
         addNeutralResponse("Zzz... Sorry what were we talking about again %1$s?");
-        addNeutralResponse("");
+        addNeutralResponse("To be or not to be, that is the question %1$s");
+        addNeutralResponse("Hi %1$s!");
         //POSITIVE
-        addResponse("No problem, %1$s!", Trigger.Type.POSITIVE);
-        addResponse("Thanks %1$s :D", Trigger.Type.POSITIVE);
-        addResponse("All in a day's work %1$s", Trigger.Type.POSITIVE);
+        addPositiveResponse("No problem, %1$s!");
+        addPositiveResponse("Thanks %1$s :D");
+        addPositiveResponse("All in a day's work %1$s");
+        addPositiveResponse("Glad to be of service %1$s");
         //NEGATIVE
-        addResponse("Is that how you really feel %1$s?", Trigger.Type.NEGATIVE);
-        addResponse("Not my fault. It was the cat %1$s.", Trigger.Type.NEGATIVE);
+        addNegativeResponse("Is that how you really feel %1$s?");
+        addNegativeResponse("Not my fault. It was the cat %1$s.");
+        addNegativeResponse("I'm trying my best here %1$s.");
+        addNegativeResponse("I crie ever teem %1$s");
         //QUESTION
-        addResponse("%1$s I'd say approximately 42.", Trigger.Type.QUESTION);
-        addResponse("%1$s My 8ball broke, try again later?", Trigger.Type.QUESTION);
+        addQuestionResponse("%1$s I'd say approximately 42.");
+        addQuestionResponse("%1$s My 8ball broke, try again later?");
+        addQuestionResponse("All signs point to yes %1$s");
+        addQuestionResponse("I'd say probably %1$s.");
     }
 
     private String content;
@@ -80,14 +88,7 @@ public class Response {
      */
     public String get() {
         //Get type of message
-        Trigger.Type type = null;
-        for (Trigger.Priority p : triggers.keySet()) {
-            for (Trigger t : triggers.get(p)) {
-                if (t.getPattern().matcher(content).find()) {
-                    type = t.getType();
-                }
-            }
-        }
+        Trigger.Type type = getType();
         //If no type found (for some reason), return early
         if (type == null) return null;
         Random rng = new Random();
@@ -97,5 +98,28 @@ public class Response {
         int index = rng.nextInt(bound);
         //Return random response
         return responses.get(type).get(index);
+    }
+
+    Trigger.Type getType() {
+        Trigger.Type type = null;
+        for (Trigger.Priority p : triggers.keySet()) {
+            for (Trigger t : triggers.get(p)) {
+                if (t.getPattern().matcher(content).find()) {
+                    type = t.getType();
+                    return type;
+                }
+            }
+        }
+        return type;
+    }
+
+    public static void formResponse(MessageReceivedEvent e) {
+        if (e.getMessage().getType().equals(MessageType.DEFAULT)) {
+            Response rep = new Response(e.getMessage().getContentStripped());
+            if (rep.shouldRespond()) {
+                String response = String.format(rep.get(), e.getAuthor().getAsMention());
+                e.getChannel().sendMessage(response).queue();
+            }
+        }
     }
 }

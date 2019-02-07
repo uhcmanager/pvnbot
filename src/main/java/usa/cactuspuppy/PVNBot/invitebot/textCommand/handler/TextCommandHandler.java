@@ -1,4 +1,4 @@
-package usa.cactuspuppy.PVNBot.invitebot.textCommand;
+package usa.cactuspuppy.PVNBot.invitebot.textCommand.handler;
 
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
