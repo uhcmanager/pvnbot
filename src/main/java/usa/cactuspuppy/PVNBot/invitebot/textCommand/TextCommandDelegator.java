@@ -2,10 +2,7 @@ package usa.cactuspuppy.PVNBot.invitebot.textCommand;
 
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Bind;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Help;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Ping;
-import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.Roll;
+import usa.cactuspuppy.PVNBot.invitebot.textCommand.handler.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +14,10 @@ public class TextCommandDelegator {
         addHandler("help", new Help());
         addHandler("bind", new Bind());
         addHandler("roll", new Roll());
+        addHandler("minesweep", new Minesweeper());
     }
 
-    static void addHandler(String name, TextCommandHandler handler) {
+    private static void addHandler(String name, TextCommandHandler handler) {
         commandHandlerMap.put(name, handler);
     }
 

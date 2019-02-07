@@ -1,6 +1,7 @@
 package usa.cactuspuppy.PVNBot.utils.minesweeper;
 
 import lombok.AllArgsConstructor;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Random;
 import java.util.StringJoiner;
@@ -106,5 +107,26 @@ public final class Generator {
 
     private String failureMessage(String reason) {
         return "%1$s Could not generate minesweeper board - " + reason;
+    }
+
+    public static void fullHandler(String[] args, MessageReceivedEvent e) {
+        if (args.length < 3) {
+            e.getChannel().sendMessage(e.getAuthor().getAsMention()).queue();
+        }
+        int width;
+        int height;
+        int bombs;
+        try {
+            width = Integer.valueOf(args[0]);
+            height = Integer.valueOf(args[1]);
+            bombs = Integer.valueOf(args[2]);
+        } catch (NumberFormatException e1) {
+            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Problem parsing arguments, make sure all arguments are integer numbers and try again.").queue();
+            return;
+        }
+        e.getChannel().sendMessage(String.format(
+                new Generator(width, height, bombs).generateBoard(),
+                e.getAuthor().getAsMention()
+        )).queue();
     }
 }
