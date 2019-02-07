@@ -14,7 +14,9 @@ public class Echo extends TextCommandHandler {
         }
         String toEcho = echo.toString();
         e.getMessage().delete().queue();
-        e.getChannel().sendMessage(toEcho).queue();
+        if (args.length > 0) {
+            e.getChannel().sendMessage(toEcho).queue();
+        }
     }
 
     @Override

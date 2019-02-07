@@ -18,10 +18,10 @@ public final class Permissions {
         if (m.getRoles().isEmpty()) {
             return m.isOwner();
         }
-        if (MainGuild.get().getSelfMember().getRoles().isEmpty()) {
+        if (m.getGuild().getSelfMember().getRoles().isEmpty()) {
             return true;
         }
-        if (!MainGuild.get().getRolesByName("Bot Operator", true).isEmpty()) {
+        if (!m.getGuild().getRolesByName("Bot Operator", true).isEmpty()) {
             List<Role> botOp = MainGuild.get().getRolesByName("Bot Operator", true);
             List<Role> mRoles = m.getRoles();
             mRoles.retainAll(botOp);
