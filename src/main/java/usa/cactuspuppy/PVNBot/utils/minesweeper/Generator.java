@@ -14,6 +14,7 @@ public final class Generator {
 
     private static final int MAX_WIDTH = 13;
     private static final int MAX_HEIGHT = 20;
+    private static final int MAX_BOMB_ATTEMPTS = 1000;
 
     /**
      * Generates a minesweeper board for play :D
@@ -38,9 +39,13 @@ public final class Generator {
         //Set bombs
         Random rng = new Random();
         for (int bombs = 0; bombs < numBombs; bombs++) {
-            int x = rng.nextInt(width);
-            int y = rng.nextInt(height);
-            setBomb(board, x, y);
+            for (int attempt = 0; attempt < MAX_BOMB_ATTEMPTS; attempt++) {
+                int x = rng.nextInt(width);
+                int y = rng.nextInt(height);
+                if (board[x][y].isBomb()) { continue; }
+                setBomb(board, x, y);
+                break;
+            }
         }
 
         //TODO: Convert board to Message
@@ -110,14 +115,12 @@ public final class Generator {
     }
 
     public static void fullHandler(String[] args, MessageReceivedEvent e) {
-        if (args.length < 3) {
-            e.getChannel().sendMessage(e.getAuthor().getAsMention() +
-                    " Usage: `;minesweep <width> <height> <bombs>").queue();
-            return;
-        }
         int width;
         int height;
         int bombs;
+        if (args.length < 3) {
+
+        }
         try {
             width = Integer.valueOf(args[0]);
             height = Integer.valueOf(args[1]);
@@ -126,7 +129,8 @@ public final class Generator {
             e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Problem parsing arguments, make sure all arguments are integer numbers and try again.").queue();
             return;
         }
-        e.getChannel().sendMessage(String.format(
+        String boardInfo = e.getMember().getAsMention() + "'s Minesweeper Game | " + bombs + " Mines | " + width + "x" + height + "\n";
+        e.getChannel().sendMessage(boardInfo + String.format(
                 new Generator(width, height, bombs).generateBoard(),
                 e.getAuthor().getAsMention()
         )).queue();

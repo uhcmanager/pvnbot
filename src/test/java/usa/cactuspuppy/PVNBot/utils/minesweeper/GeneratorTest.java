@@ -33,4 +33,12 @@ public class GeneratorTest {
         assertTrue(result.contains("%1$s"));
         System.out.println(result);
     }
+
+    @Test
+    public void testOverlap() {
+        System.out.println("\nChecking overlapping bombs...");
+        String result = new Generator(5, 5, 24).generateBoard();
+        assertFalse(result.contains("%1$s"));
+        System.out.println(result);
+    }
 }
