@@ -15,10 +15,11 @@ public class TextCommandDelegator {
         addHandler("help", new Help());
         addHandler("bind", new Bind());
         addHandler("roll", new Roll());
+        addHandler("minesweep", new Minesweeper());
         addHandler("echo", new Echo());
     }
 
-    static void addHandler(String name, TextCommandHandler handler) {
+    private static void addHandler(String name, TextCommandHandler handler) {
         commandHandlerMap.put(name, handler);
     }
 

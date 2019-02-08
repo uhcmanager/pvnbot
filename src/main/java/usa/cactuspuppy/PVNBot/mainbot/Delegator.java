@@ -1,17 +1,11 @@
 package usa.cactuspuppy.PVNBot.mainbot;
 
 import lombok.Getter;
-import net.dv8tion.jda.core.entities.MessageType;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import usa.cactuspuppy.PVNBot.Main;
 import usa.cactuspuppy.PVNBot.constants.main.MainData;
-import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
-import usa.cactuspuppy.PVNBot.utils.convo.Response;
-import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.CommandHandler;
-import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Ping;
-import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.Roll;
-import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.SetPrefix;
+import usa.cactuspuppy.PVNBot.mainbot.textCommand.handler.*;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
 import java.io.ByteArrayInputStream;
@@ -33,6 +27,7 @@ public class Delegator extends ListenerAdapter {
         addHandler("ping", new Ping());
         addHandler("roll", new Roll());
         addHandler("setprefix", new SetPrefix());
+        addHandler("minesweep", new Minesweeper());
     }
 
     @Override
