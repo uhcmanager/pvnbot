@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TextCommandDelegator {
-    private static Map<String, TextCommandHandler> commandHandlerMap = new HashMap<String, TextCommandHandler>();
+    private static Map<String, TextCommandHandler> commandHandlerMap = new HashMap<>();
     static {
         addHandler("ping", new Ping());
         addHandler("help", new Help());

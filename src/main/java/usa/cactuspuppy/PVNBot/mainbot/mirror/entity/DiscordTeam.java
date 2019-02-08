@@ -23,27 +23,29 @@ public class DiscordTeam extends MirrorEntity {
     private Set<Long> members = new HashSet<>();
 
     public DiscordTeam(Team team) {
-        Guild main = MainGuild.get();
-        if (main.getCategoriesByName(team.getName(), false).size() != 0) {
-            categoryID = main.getCategoriesByName(team.getName(), false).get(0).getIdLong();
-        } else {
-            categoryID = EntityCreator.createCategory(team.getName(), true);
-        }
-        if (categoryID == -1) {
-            Logger.logWarning(this.getClass(), "Could not create or bind to mirroring category for team");
-            return;
-        }
-        if (main.getRolesByName(team.getName(), false).size() != 0) {
-            roleID = main.getRolesByName(team.getName(), false).get(0).getIdLong();
-        } else {
-            roleID = EntityCreator.createRole(team.getName(), true);
-        }
-        teamID = team.getId();
-        this.team = team;
-        teamIDMap.put(teamID, this);
-        team.getPlayers().stream().map(Bridge::mcToDiscord).filter(l -> l != -1).forEach(members::add);
-        EntityMagician.hideEntity(categoryID, ChannelType.CATEGORY, main.getPublicRole());
-        EntityMagician.activateEntity(categoryID, ChannelType.CATEGORY, main.getRoleById(roleID));
+        new Thread(() -> {
+            Guild main = MainGuild.get();
+            if (main.getCategoriesByName(team.getName(), false).size() != 0) {
+                categoryID = main.getCategoriesByName(team.getName(), false).get(0).getIdLong();
+            } else {
+                categoryID = EntityCreator.createCategory(team.getName(), true);
+            }
+            if (categoryID == -1) {
+                Logger.logWarning(this.getClass(), "Could not create or bind to mirroring category for team");
+                return;
+            }
+            if (main.getRolesByName(team.getName(), false).size() != 0) {
+                roleID = main.getRolesByName(team.getName(), false).get(0).getIdLong();
+            } else {
+                roleID = EntityCreator.createRole(team.getName(), true);
+            }
+            teamID = team.getId();
+            this.team = team;
+            teamIDMap.put(teamID, this);
+            team.getPlayers().stream().map(Bridge::mcToDiscord).filter(l -> l != -1).forEach(members::add);
+            EntityMagician.hideEntity(categoryID, ChannelType.CATEGORY, main.getPublicRole());
+            EntityMagician.activateEntity(categoryID, ChannelType.CATEGORY, main.getRoleById(roleID));
+        }).start();
     }
 
     /**
