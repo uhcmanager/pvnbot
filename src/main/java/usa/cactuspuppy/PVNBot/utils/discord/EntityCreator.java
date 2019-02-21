@@ -71,7 +71,7 @@ public class EntityCreator {
         if (category != -1) {
             tc = (TextChannel) controller.getGuild().getCategoryById(category).createTextChannel(name).complete();
         } else {
-            tc = (TextChannel) controller.createTextChannel(name);
+            tc = (TextChannel) controller.createTextChannel(name).complete();
         }
         return tc.getIdLong();
     }

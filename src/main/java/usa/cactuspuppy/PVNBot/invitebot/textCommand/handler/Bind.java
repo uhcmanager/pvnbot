@@ -21,32 +21,34 @@ public class Bind extends TextCommandHandler {
      */
     @Override
     public void onCommand(String[] args, MessageReceivedEvent e) {
-        if (args.length < 2) {
-            e.getChannel().sendMessage(String.format("%s Not enough args to bind. Usage: `;bind <channelID> <messageID>`", e.getAuthor().getAsMention())).queue();
-            return;
-        }
-        String channelID = args[0];
-        String messageID = args[1];
+        new Thread(() -> {
+            if (args.length < 2) {
+                e.getChannel().sendMessage(String.format("%s Not enough args to bind. Usage: `;bind <channelID> <messageID>`", e.getAuthor().getAsMention())).queue();
+                return;
+            }
+            String channelID = args[0];
+            String messageID = args[1];
 
-        TextChannel channel = e.getGuild().getTextChannelById(channelID);
-        if (channel == null) {
-            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Could not find channel with ID `" + channelID + "`").queue();
-            return;
-        }
-        Message message = channel.getMessageById(messageID).complete();
-        if (message == null) {
-            e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Could not find message with ID `" + messageID + "`").queue();
-            return;
-        }
-        //Found message
-        Guild guild = Main.getInvitationJDA().getGuildById("407385931687919616");
-        message.addReaction(guild.getEmoteById("525571121936859156")).queue();
-        InviteMain.setMessageID(messageID);
-        InviteMain.setChannelID(channelID);
-        InviteMain.storeMsgID(new ByteArrayInputStream(
-                String.format("%s\n%s", channelID, messageID).getBytes()
-        ));
-        e.getChannel().sendMessage(String.format("%s Successfully started monitoring message ID `%s`", e.getAuthor().getAsMention(), messageID)).queue();
+            TextChannel channel = e.getGuild().getTextChannelById(channelID);
+            if (channel == null) {
+                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Could not find channel with ID `" + channelID + "`").queue();
+                return;
+            }
+            Message message = channel.getMessageById(messageID).complete();
+            if (message == null) {
+                e.getChannel().sendMessage(e.getAuthor().getAsMention() + " Could not find message with ID `" + messageID + "`").queue();
+                return;
+            }
+            //Found message
+            Guild guild = Main.getInvitationJDA().getGuildById("407385931687919616");
+            message.addReaction(guild.getEmoteById("525571121936859156")).queue();
+            InviteMain.setMessageID(messageID);
+            InviteMain.setChannelID(channelID);
+            InviteMain.storeMsgID(new ByteArrayInputStream(
+                    String.format("%s\n%s", channelID, messageID).getBytes()
+            ));
+            e.getChannel().sendMessage(String.format("%s Successfully started monitoring message ID `%s`", e.getAuthor().getAsMention(), messageID)).queue();
+        }).start();
     }
 
     /**

@@ -1,17 +1,17 @@
 package usa.cactuspuppy.PVNBot.mainbot.hook;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import usa.cactuspuppy.PVNBot.mainbot.mirror.entity.DiscordGroup;
 import usa.cactuspuppy.PVNBot.mainbot.mirror.entity.DiscordTeam;
 import usa.cactuspuppy.PVNBot.utils.Logger;
-import usa.cactuspuppy.uhc_automation.event.EventHandler;
-import usa.cactuspuppy.uhc_automation.event.EventListener;
 import usa.cactuspuppy.uhc_automation.event.game.group.GroupCreateEvent;
 import usa.cactuspuppy.uhc_automation.event.game.group.GroupDeleteEvent;
 import usa.cactuspuppy.uhc_automation.event.game.group.GroupSetTeamEvent;
 import usa.cactuspuppy.uhc_automation.event.game.team.TeamCreateEvent;
 import usa.cactuspuppy.uhc_automation.event.game.update.GameStartEvent;
 
-public class UHCListener implements EventListener {
+public class UHCListener implements Listener {
     @EventHandler
     public void onGroupCreate(GroupCreateEvent e) {
         new DiscordGroup(e.getGroup());

@@ -23,24 +23,26 @@ public class DiscordGroup extends MirrorEntity {
     private Set<Long> members = new HashSet<>();
 
     public DiscordGroup(Group g) {
-        groupID = g.getId();
-        group = g;
-        groupIDMap.put(groupID, this);
-        Team parent = g.getTeam();
-        String name = "Group " + g.getNum();
-        //Create new voice channel
-        if (parent == null) {
-            voiceID = EntityCreator.createVoiceChannel(-1, name, true);
-        } else {
-            DiscordTeam parentDiscordTeam = DiscordTeam.getDiscordTeamByTeamID(parent.getId());
-            voiceID = EntityCreator.createVoiceChannel(parentDiscordTeam.getCategoryID(), name, true);
-            parentDiscordTeam.addGroup(this);
-        }
-        //Set permissions for the new voice channel
-        EntityMagician.hideEntity(voiceID, ChannelType.VOICE, MainGuild.get().getPublicRole());
-        //Add all members from the group
-        g.getPlayers().stream().map(Bridge::mcToDiscord).filter(l -> l != -1).forEach(members::add);
-        moveMembersIntoChannel(members.stream().mapToLong(Long::valueOf).toArray());
+        new Thread(() -> {
+            groupID = g.getId();
+            group = g;
+            groupIDMap.put(groupID, this);
+            Team parent = g.getTeam();
+            String name = "Group " + g.getNum();
+            //Create new voice channel
+            if (parent == null) {
+                voiceID = EntityCreator.createVoiceChannel(-1, name, true);
+            } else {
+                DiscordTeam parentDiscordTeam = DiscordTeam.getDiscordTeamByTeamID(parent.getId());
+                voiceID = EntityCreator.createVoiceChannel(parentDiscordTeam.getCategoryID(), name, true);
+                parentDiscordTeam.addGroup(this);
+            }
+            //Set permissions for the new voice channel
+            EntityMagician.hideEntity(voiceID, ChannelType.VOICE, MainGuild.get().getPublicRole());
+            //Add all members from the group
+            g.getPlayers().stream().map(Bridge::mcToDiscord).filter(l -> l != -1).forEach(members::add);
+            moveMembersIntoChannel(members.stream().mapToLong(Long::valueOf).toArray());
+        }).start();
     }
 
     public void moveMembersIntoChannel(long... memberIDs) {
