@@ -24,7 +24,7 @@ public class DiceWrapper {
     }
 
     public static void perform(String[] args, MessageReceivedEvent e) {
-        StringJoiner joiner = new StringJoiner("");
+        StringJoiner joiner = new StringJoiner(" ");
         for (String s : args) {
             joiner.add(s);
         }

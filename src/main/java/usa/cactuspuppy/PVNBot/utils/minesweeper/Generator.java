@@ -12,8 +12,8 @@ public final class Generator {
     private int height;
     private int numBombs;
 
-    private static final int MAX_WIDTH = 13;
-    private static final int MAX_HEIGHT = 20;
+    private static final int MAX_WIDTH = 50;
+    private static final int MAX_HEIGHT = 24;
     private static final int MAX_BOMB_ATTEMPTS = 1000;
 
     /**
@@ -119,7 +119,7 @@ public final class Generator {
         int height;
         int bombs;
         if (args.length < 3) {
-
+            //TODO: Check for difficulty enum
         }
         try {
             width = Integer.valueOf(args[0]);
@@ -130,7 +130,13 @@ public final class Generator {
             return;
         }
         String boardInfo = e.getMember().getAsMention() + "'s Minesweeper Game | " + bombs + " Mines | " + width + "x" + height + "\n";
-        e.getChannel().sendMessage(boardInfo + String.format(
+        String calibrationInfo = "**CALIBRATION** - If the following line of :one:'s takes up more than one line, this board will not work for you.\n";
+        StringBuilder cRowBuilder = new StringBuilder();
+        for (int i = 0; i < width; i++) {
+            cRowBuilder.append(":one:");
+        }
+        String calibrationRow = cRowBuilder.toString() + "\n";
+        e.getChannel().sendMessage(boardInfo + calibrationInfo + calibrationRow + String.format(
                 new Generator(width, height, bombs).generateBoard(),
                 e.getAuthor().getAsMention()
         )).queue();

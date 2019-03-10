@@ -10,7 +10,7 @@ public class UHCHook {
             Class.forName("usa.cactuspuppy.uhc_automation.event.game.GameEvent");
             Bukkit.getPluginManager().registerEvents(new UHCListener(), Wrapper.getInstance());
         } catch (ClassNotFoundException e) {
-            Main.getLogger().warning("Could not hook into UHC Automation");
+            Main.getLogger().warning("Could not find UHCAutomation, not enabling integration...");
         }
     }
 }

@@ -38,7 +38,12 @@ public class TokenizerTest {
     }
 
     @Test
-    public void quickTest() {
-        System.out.println(Double.valueOf("-1.5"));
+    public void negativeVsMinus() {
+        List<Tokenizer.Token> tokens = Tokenizer.tokenize("(4d6k3 - 10) / 2");
+        StringBuilder builder = new StringBuilder();
+        for (Tokenizer.Token t : tokens) {
+            builder.append(" ").append(t.getTokenID()).append(" ").append(t.getSequence()).append("\n");
+        }
+        System.out.println(builder.toString());
     }
 }
