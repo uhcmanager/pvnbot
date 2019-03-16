@@ -5,7 +5,6 @@ import lombok.Setter;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import usa.cactuspuppy.PVNBot.constants.main.MainData;
-import usa.cactuspuppy.PVNBot.invitebot.InviteMain;
 import usa.cactuspuppy.PVNBot.mainbot.Init;
 import usa.cactuspuppy.PVNBot.utils.FileIO;
 
@@ -41,10 +40,6 @@ public class Main {
         logger.info("Shutting down...");
         invitationJDA.shutdown();
         mainJDA.shutdown();
-    }
-
-    public static void startInvBot() {
-        InviteMain.main();
     }
 
     public static void startMainBot() {
