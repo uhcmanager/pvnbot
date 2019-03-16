@@ -34,7 +34,6 @@ public class Main {
             dataPath = "data";
         }
         if (logger == null) logger = Logger.getLogger(Main.class.getName());
-        startInvBot();
         startMainBot();
     }
 
