@@ -223,9 +223,9 @@ public final class DiceRoller {
             }
         }
         //ROLL FOR INITIATIVE
-        Rolls rollResult; //to get compiler to stop complaining
+        Rolls rollResult;
         long sumResult = 0;
-        StringJoiner formulaBuilder = new StringJoiner(" + ");
+        StringJoiner formulaBuilder = new StringJoiner(") + (", "(", ")");
         for (int i = 0; i < repeat; i++) {
             try {
                 rollResult = roll(rolls, sides, rerolls, drop, keepDrops);

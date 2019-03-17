@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.StringJoiner;
 
 public class DiceWrapper {
-    private static final int MAX_FORMULA_LENGTH = 20;
+    private static final int MAX_FORMULA_LENGTH = 100;
 
     public static void command(MessageReceivedEvent e, String[] args) {
         if (!e.getChannel().getName().equals("dice-rolling")) {
