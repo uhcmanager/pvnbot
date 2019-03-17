@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class DiceRollerTest {
     private TestRNG testRNG = new TestRNG();
@@ -80,5 +81,23 @@ public class DiceRollerTest {
         assertEquals(123, DiceRoller.stringToInt("123"));
         assertEquals(0, DiceRoller.stringToInt("0"));
         assertEquals(-45, DiceRoller.stringToInt("-45"));
+    }
+
+    @Test
+    public void testInvalidKeep() {
+        DiceRoller.RollResult result = DiceRoller.parseSingleRoll("3d20k8");
+        assertFalse(result.isSuccess());
+    }
+
+    @Test
+    public void testInvalidDrop() {
+        DiceRoller.RollResult result = DiceRoller.parseSingleRoll("3d20D4");
+        assertFalse(result.isSuccess());
+    }
+
+    @Test
+    public void testInvalidReroll() {
+        DiceRoller.RollResult result = DiceRoller.parseSingleRoll("3d20r21");
+        assertFalse(result.isSuccess());
     }
 }

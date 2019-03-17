@@ -156,15 +156,27 @@ public final class DiceRoller {
                             match = true;
                             switch (r.getMod()) {
                                 case 'k': {
-                                    drop = rolls - stringToInt(matcher.group().substring(1));
+                                    int temp = stringToInt(matcher.group().substring(1));
+                                    if (temp > rolls) {
+                                        throw new NumberFormatException("Cannot keep more rolls than dice being rolled");
+                                    }
+                                    drop = rolls - temp;
                                     break;
                                 }
                                 case 'D': {
-                                    drop = stringToInt(matcher.group().substring(1));
+                                    int temp = stringToInt(matcher.group().substring(1));
+                                    if (temp > rolls) {
+                                        throw new NumberFormatException("Cannot drop more rolls than dice being rolled");
+                                    }
+                                    drop = temp;
                                     break;
                                 }
                                 case 'r': {
-                                    rerolls.add(stringToInt(matcher.group().substring(1)));
+                                    int temp = stringToInt(matcher.group().substring(1));
+                                    if (temp > sides) {
+                                        throw new NumberFormatException("Specified reroll value greater than number of sides");
+                                    }
+                                    rerolls.add(temp);
                                     break;
                                 }
                                 case 'v': {
