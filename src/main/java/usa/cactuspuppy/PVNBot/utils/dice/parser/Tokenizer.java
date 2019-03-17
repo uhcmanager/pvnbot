@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 public class Tokenizer {
     private static Map<Integer, TokenDef> tokenDefs = new LinkedHashMap<>();
     static {
-        addTokenDef("(\\d*)d(\\d+)(\\w*)", Token.DICE); //dice rolls
+        addTokenDef("(\\d+x)?(\\d+)?d(\\d+)(\\w+)?", Token.DICE); //dice rolls
         addTokenDef("\\(", Token.OPEN_PAREN); //open paren
         addTokenDef("\\)", Token.CLOSE_PAREN); //close paren
         addTokenDef("-?[0-9]+\\.?[0-9]*", Token.NUMBER); //numbers before add/sub to make sure we capture negative numbers
