@@ -16,6 +16,7 @@ public final class DiceRoller {
     private static final int MAX_ROLLS = 100;
     private static final int MAX_SIDES = 9001;
     private static final int MAX_ATTEMPTS = 10000;
+    private static final int MAX_REPEATS = 50;
     private static Map<Character, RollModifier> rollModifiers = new HashMap<>();
     @Setter private static Random rng = new Random();
     static {
@@ -117,6 +118,9 @@ public final class DiceRoller {
                     results.setSuccess(false);
                     results.setReason("Number of repeats must be positive");
                     return results;
+                } else if (repeat > MAX_REPEATS) {
+                    results.setSuccess(false);
+                    results.setReason("Number of repeats may not exceed " + MAX_REPEATS);
                 }
             } catch (NumberFormatException e) {
                 results.setSuccess(false);
