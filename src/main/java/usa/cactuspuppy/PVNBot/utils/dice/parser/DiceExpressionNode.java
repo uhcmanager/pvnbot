@@ -27,7 +27,7 @@ public class DiceExpressionNode implements ExpressionNode {
     }
 
     public void setValue() {
-        DiceRoller.RollResult result = DiceRoller.parseSingleRoll(stringRep);
+        DiceRoller.RollResult result = DiceRoller.parseRoll(stringRep);
         if (!result.isSuccess()) {
             throw new Parser.EvalException(result.getReason());
         }

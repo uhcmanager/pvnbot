@@ -91,15 +91,16 @@ public final class DiceRoller {
      *     "result" - The final total of the formula<br>
      *     "formula" - All rolls concatenated with " + ", dropped rolls braced by "~~"<br>
      */
-    public static RollResult parseSingleRoll(String command, boolean keepDrops) {
+    public static RollResult parseRoll(String command, boolean keepDrops) {
         RollResult results = new RollResult();
         int rolls = 1;
         int sides;
         int drop = 0;
+        int repeat = 1;
         List<Integer> rerolls = new ArrayList<>();
 
         //Begin parsing
-        Pattern p = Pattern.compile("(\\d*)d(\\d+)(\\w*)");
+        Pattern p = Pattern.compile("(\\d+x)?(\\d+)?d(\\d+)(\\w+)?");
         Matcher m = p.matcher(command);
         //Check format
         if (!m.matches()) {
@@ -107,10 +108,26 @@ public final class DiceRoller {
             results.setReason("Incorrect formatting");
             return results;
         }
-        //Get rolls
-        if (!m.group(1).equals("")) {
+        //Get repetitions
+        if (m.group(1) != null) {
+            String repetitions = m.group(1).substring(0, m.group(1).length() - 1);
             try {
-                rolls = stringToInt(m.group(1));
+                repeat = stringToInt(repetitions);
+                if (repeat < 1) {
+                    results.setSuccess(false);
+                    results.setReason("Number of repeats must be positive");
+                    return results;
+                }
+            } catch (NumberFormatException e) {
+                results.setSuccess(false);
+                results.setReason(e.getMessage());
+                return results;
+            }
+        }
+        //Get rolls
+        if (m.group(2) != null) {
+            try {
+                rolls = stringToInt(m.group(2));
                 if (rolls <= 0) {
                     results.setSuccess(false);
                     results.setReason("Number of rolls must be positive");
@@ -128,7 +145,7 @@ public final class DiceRoller {
         }
         //Get sides
         try {
-            sides = stringToInt(m.group(2));
+            sides = stringToInt(m.group(3));
             if (sides <= 0) {
                 results.setSuccess(false);
                 results.setReason("Number of sides must be positive");
@@ -144,8 +161,8 @@ public final class DiceRoller {
             return results;
         }
         //Parse modifiers
-        if (!m.group(3).equals("")) {
-            String modifiers = m.group(3);
+        if (m.group(4) != null) {
+            String modifiers = m.group(4);
             while (!modifiers.equals("")) {
                 boolean match = false;
                 //Attempt to match all modifiers with regex
@@ -202,19 +219,30 @@ public final class DiceRoller {
             }
         }
         //ROLL FOR INITIATIVE
-        Rolls rollResult;
-        try {
-            rollResult = roll(rolls, sides, rerolls, drop, keepDrops);
-        } catch (Exception e) {
-            results.setSuccess(false);
-            results.setReason(e.getMessage());
-            return results;
+        Rolls rollResult; //to get compiler to stop complaining
+        long sumResult = 0;
+        StringJoiner formulaBuilder = new StringJoiner(" + ");
+        for (int i = 0; i < repeat; i++) {
+            try {
+                rollResult = roll(rolls, sides, rerolls, drop, keepDrops);
+                if (sumResult > Long.MAX_VALUE - rollResult.getResult()) {
+                    results.setSuccess(false);
+                    results.setReason("Overflow while repeating roll");
+                    return results;
+                }
+                sumResult += rollResult.getResult();
+                formulaBuilder.add(rollResult.toString());
+            } catch (Exception e) {
+                results.setSuccess(false);
+                results.setReason(e.getMessage());
+                return results;
+            }
         }
         results.setSuccess(true);
         results.setSides(sides);
         results.setRolls(rolls);
-        results.setResult(rollResult.getResult());
-        results.setFormula(rollResult.toString());
+        results.setResult(sumResult);
+        results.setFormula(formulaBuilder.toString());
         return results;
     }
 
@@ -223,8 +251,8 @@ public final class DiceRoller {
      * @param command roll command
      * @return the resulting rolls without dropped rolls
      */
-    public static RollResult parseSingleRoll(String command) {
-        return parseSingleRoll(command, false);
+    public static RollResult parseRoll(String command) {
+        return parseRoll(command, false);
     }
 
     /**

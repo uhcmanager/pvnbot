@@ -6,8 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class DiceRollerTest {
     private TestRNG testRNG = new TestRNG();
@@ -43,26 +42,26 @@ public class DiceRollerTest {
 
     @Test
     public void parseSingleRollSimple() {
-        DiceRoller.RollResult results = DiceRoller.parseSingleRoll("d20", true);
+        DiceRoller.RollResult results = DiceRoller.parseRoll("d20", true);
         assertEquals(1, results.getResult(), 0.01);
     }
 
     @Test
     public void parseSingleRollSingleMods() {
-        DiceRoller.RollResult results = DiceRoller.parseSingleRoll("2d20D1", true);
+        DiceRoller.RollResult results = DiceRoller.parseRoll("2d20D1", true);
         assertEquals(2, results.getResult(), 0.01);
         testRNG.resetCount();
-        results = DiceRoller.parseSingleRoll("3d20k2");
+        results = DiceRoller.parseRoll("3d20k2");
         assertEquals(5, results.getResult(), 0.01);
         testRNG.resetCount();
-        results = DiceRoller.parseSingleRoll("3d20r1");
+        results = DiceRoller.parseRoll("3d20r1");
         assertEquals(9, results.getResult(), 0.01);
         testRNG.resetCount();
     }
 
     @Test
     public void parseSingleRollMultiMods() {
-        DiceRoller.RollResult results = DiceRoller.parseSingleRoll("3d20k1D1r1");
+        DiceRoller.RollResult results = DiceRoller.parseRoll("3d20k1D1r1");
         assertEquals(7, results.getResult(), 0.01);
         testRNG.resetCount();
     }
@@ -85,19 +84,26 @@ public class DiceRollerTest {
 
     @Test
     public void testInvalidKeep() {
-        DiceRoller.RollResult result = DiceRoller.parseSingleRoll("3d20k8");
+        DiceRoller.RollResult result = DiceRoller.parseRoll("3d20k8");
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void testInvalidDrop() {
-        DiceRoller.RollResult result = DiceRoller.parseSingleRoll("3d20D4");
+        DiceRoller.RollResult result = DiceRoller.parseRoll("3d20D4");
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void testInvalidReroll() {
-        DiceRoller.RollResult result = DiceRoller.parseSingleRoll("3d20r21");
+        DiceRoller.RollResult result = DiceRoller.parseRoll("3d20r21");
         assertFalse(result.isSuccess());
+    }
+
+    @Test
+    public void testRepeatRoll() {
+        DiceRoller.RollResult result = DiceRoller.parseRoll("2x1d20");
+        assertTrue(result.isSuccess());
+        assertEquals(3, result.getResult(), 0.001);
     }
 }
