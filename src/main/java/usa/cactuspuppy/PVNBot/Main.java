@@ -38,7 +38,6 @@ public class Main {
 
     public static void halt() {
         logger.info("Shutting down...");
-        invitationJDA.shutdown();
         mainJDA.shutdown();
     }
 

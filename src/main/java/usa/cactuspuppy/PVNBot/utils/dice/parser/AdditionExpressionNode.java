@@ -18,17 +18,16 @@ public class AdditionExpressionNode extends SequenceExpressionNode {
     public double getValue() throws Parser.EvalException {
         double sum = 0.0;
         for (Term t : terms) {
-            if ((t.getExpression().getValue() > 0 && t.isPositive()) || (t.getExpression().getValue() < 0 && !t.isPositive())) {
-                if (sum > Double.MAX_VALUE - t.getExpression().getValue()) {
-                    throw new Parser.EvalException("Positive overflow while summing");
-                }
-                sum += t.getExpression().getValue();
-            } else {
-                if (sum < Double.MIN_VALUE + t.getExpression().getValue()) {
-                    throw new Parser.EvalException("Negative overflow while summing");
-                }
-                sum -= t.getExpression().getValue();
+            double val = t.getExpression().getValue();
+            if (!t.isPositive()) {
+                val = val * -1;
             }
+            if (val > 0 && sum > Double.MAX_VALUE - val) {
+                throw new Parser.EvalException("Positive overflow while summing");
+            } else if (val < 0 && sum < Double.MIN_VALUE + val) {
+                throw new Parser.EvalException("Negative overflow while summing");
+            }
+            sum += val;
         }
         return sum;
     }

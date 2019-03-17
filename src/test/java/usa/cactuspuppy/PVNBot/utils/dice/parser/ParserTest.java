@@ -86,6 +86,16 @@ public class ParserTest {
         expr = testParser.parse(Tokenizer.tokenize("-1/2"));
         System.out.println(testParser.getFormula());
         assertEquals(-0.5, expr.getValue(), 0.01);
+
+        testParser = new Parser();
+        expr = testParser.parse(Tokenizer.tokenize("-1/-2"));
+        System.out.println(testParser.getFormula());
+        assertEquals(0.5, expr.getValue(), 0.01);
+
+        testParser = new Parser();
+        expr = testParser.parse(Tokenizer.tokenize("-1/-0.5"));
+        System.out.println(testParser.getFormula());
+        assertEquals(2, expr.getValue(), 0.01);
     }
 
     @Test
@@ -118,5 +128,20 @@ public class ParserTest {
     public void testInvalid() {
         Parser testParser = new Parser();
         testParser.parse(Tokenizer.tokenize("---1"));
+    }
+
+    @Test
+    public void testNegNum() {
+        Parser testPar = new Parser();
+        List<Tokenizer.Token> tokens = Tokenizer.tokenize("(2+2)*(3--1.5)");
+        ExpressionNode expr = testPar.parse(tokens);
+        System.out.println(testPar.getFormula());
+        assertEquals(18.0, expr.getValue(), 0.001);
+
+        testPar = new Parser();
+        tokens = Tokenizer.tokenize("(2+2)*(3 + -1.5)");
+        expr = testPar.parse(tokens);
+        System.out.println(testPar.getFormula());
+        assertEquals(6.0, expr.getValue(), 0.001);
     }
 }

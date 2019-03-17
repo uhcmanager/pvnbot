@@ -35,6 +35,13 @@ public class TokenizerTest {
             builder.append(" ").append(t.getTokenID()).append(" ").append(t.getSequence()).append("\n");
         }
         System.out.println(builder.toString());
+
+        tokens = Tokenizer.tokenize("(2+2)*(3 + -1.5)");
+        builder = new StringBuilder();
+        for (Tokenizer.Token t : tokens) {
+            builder.append(" ").append(t.getTokenID()).append(" ").append(t.getSequence()).append("\n");
+        }
+        System.out.println(builder.toString());
     }
 
     @Test
